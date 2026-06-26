@@ -11,7 +11,7 @@
 
 ---
 
-## Task 1 — Initial structure and planning
+## Task 1 — Initial structure and planning ✅
 
 | Field | Value |
 |-------|-------|
@@ -23,7 +23,7 @@
 
 ---
 
-## Task 2 — FastAPI backend shell
+## Task 2 — FastAPI backend shell ✅
 
 | Field | Value |
 |-------|-------|
@@ -35,7 +35,7 @@
 
 ---
 
-## Task 3 — React Vite shell
+## Task 3 — React Vite shell ✅
 
 | Field | Value |
 |-------|-------|
@@ -47,7 +47,7 @@
 
 ---
 
-## Task 4 — Database models and Alembic
+## Task 4 — Database models and Alembic ✅
 
 | Field | Value |
 |-------|-------|
@@ -59,7 +59,7 @@
 
 ---
 
-## Task 5 — Config, logging, errors
+## Task 5 — Config, logging, errors ✅
 
 | Field | Value |
 |-------|-------|
@@ -447,17 +447,32 @@
                     29,30 (parallel) → 31 → 32 → 33 → 34 → 35
 ```
 
-## Continuity between sessions
+## Project status
 
-If work spans sessions, before stopping:
+**Last green commit:** `05cb8db`
 
-1. Merge or push current feature branch state.
-2. Update `docs/CHANGELOG.md` with completed tasks.
-3. Update this file: mark completed tasks with ✅ and note blockers.
-4. Record last green commit hash in `README.md` "Development status" section.
+### Phase 0 — Planning
+Complete. Architecture, API, database schema, component tree, and this task list.
 
-## Phase 0 approval
+### Phase 1 — Foundation (Tasks 1–5)
+Complete.
+- Task 1: repo structure, planning docs (`ee25c24`)
+- Task 2: FastAPI `/api/v1/health` (`7a935c5`)
+- Task 3: React Vite shell, health panel (`0f67925`)
+- Task 4: SQLAlchemy models, Alembic `001_initial` (`7654e53`)
+- Task 5: `.env` config, logging, error responses (`eb5172b`)
 
-**Status**: Awaiting approval to begin Task 1 implementation.
+### Phase 2 — Auth and file pipeline (Tasks 6–11)
+Not started. Next up: Task 6 (JWT auth and RBAC).
 
-Once approved, agent proceeds with `git init`, Task 1 branch, and sequential feature development.
+### Phase 3 — Analysis services (Tasks 12–19)
+Not started. EDA, SQL, regression, classification, clustering, time series, similarity.
+
+### Phase 4 — Insights, UI, and export (Tasks 20–25)
+Not started. Explainability, business KPIs, charts, PDF/JSON/CSV export.
+
+### Phase 5 — Jobs, plugins, monitoring (Tasks 26–28)
+Not started. Background tasks, plugin registry, health/metrics endpoints.
+
+### Phase 6 — Quality and shipping (Tasks 29–35)
+Not started. Test coverage, CI, Docker, deployment, docs, final validation.

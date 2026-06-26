@@ -2,7 +2,7 @@
 
 Portfolio-grade full-stack analytics platform: secure CSV ingestion, exploratory data analysis, predictive ML, SQL analytics, business KPIs, and professional report export.
 
-**Current phase**: Phase 0 — Planning complete (pending approval for implementation).
+**Current phase:** Phase 2 — Auth and file pipeline (Task 6 next).
 
 ## Planning documents
 
@@ -24,8 +24,16 @@ MIT (see [LICENSE](LICENSE)).
 
 ## Development status
 
-| Phase | Status |
-|-------|--------|
-| Phase 0 — Planning | Complete |
-| Phase 1 — Tasks 1–5 (foundation) | Complete |
-| Phase 1 — Tasks 6–35 | In progress |
+**Last commit:** `05cb8db`
+
+| Phase | Scope | Status |
+|-------|-------|--------|
+| 0 | Planning docs | Done |
+| 1 | Tasks 1–5 — scaffold, API, frontend shell, DB, config | Done |
+| 2 | Tasks 6–11 — auth, upload, scanner, assets, audit, versioning | Next |
+| 3 | Tasks 12–19 — EDA, SQL, ML models | Pending |
+| 4 | Tasks 20–25 — explainability, business, charts, export | Pending |
+| 5 | Tasks 26–28 — jobs, plugins, monitoring | Pending |
+| 6 | Tasks 29–35 — tests, CI, Docker, deploy, validation | Pending |
+
+Task detail and commit mapping: [docs/TASKS.md](docs/TASKS.md).
