@@ -6,12 +6,11 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import inspect
-from sqlalchemy.orm import Session
-
 from app.database import SessionLocal, engine
 from app.models import UploadedFile, User, UserSession
 from app.models.user import UserRole
+from sqlalchemy import inspect
+from sqlalchemy.orm import Session
 
 
 @pytest.fixture

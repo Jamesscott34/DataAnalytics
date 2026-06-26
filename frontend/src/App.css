@@ -44,6 +44,37 @@ button {
   margin-top: 0.5rem;
 }
 
+.auth-page form,
+.dashboard-header {
+  background: #fff;
+  border: 1px solid #dde3ea;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.auth-page label {
+  display: block;
+  margin-top: 0.75rem;
+  font-weight: 500;
+}
+
+.auth-page input {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccd4dc;
+  border-radius: 4px;
+}
+
+.form-error {
+  color: #b91c1c;
+  margin-top: 0.75rem;
+}
+
+.dashboard-header {
+  margin-bottom: 1rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

@@ -4,6 +4,8 @@
  * All fetch calls must go through this module — not directly from components.
  */
 
+import { getAccessToken } from './tokenStorage.js';
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api/v1';
 
@@ -33,10 +35,15 @@ async function parseApiError(response) {
  */
 export async function apiRequest(path, options = {}) {
   const url = `${API_BASE_URL}${path}`;
+  const token = getAccessToken();
   const headers = {
     Accept: 'application/json',
     ...options.headers,
   };
+
+  if (token && !headers.Authorization) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, { ...options, headers });
 
