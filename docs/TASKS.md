@@ -71,7 +71,7 @@
 
 ---
 
-## Task 6 — Authentication
+## Task 6 — Authentication ✅
 
 | Field | Value |
 |-------|-------|
@@ -461,7 +461,7 @@ Complete.
 - Task 5: `.env` config, logging, error responses (`eb5172b`)
 
 ### Phase 2 — Auth and file pipeline (Tasks 6–11)
-Not started. Next up: Task 6 (JWT auth and RBAC).
+In progress. Task 6 complete (JWT auth, RBAC, login UI). Next: Task 7 (CSV upload).
 
 ### Phase 3 — Analysis services (Tasks 12–19)
 Not started. EDA, SQL, regression, classification, clustering, time series, similarity.

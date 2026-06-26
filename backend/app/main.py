@@ -5,7 +5,6 @@ middleware. Does not contain business logic or route handlers beyond wiring.
 """
 
 from collections.abc import AsyncIterator
-
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -16,7 +15,7 @@ from app.exceptions import register_exception_handlers
 from app.logging_config import configure_logging
 from app.middleware.security import SecurityHeadersMiddleware
 from app.middleware.timing import RequestTimingMiddleware
-from app.routers import health
+from app.routers import auth, health, uploads, users
 
 API_V1_PREFIX = "/api/v1"
 
@@ -56,6 +55,9 @@ def create_app() -> FastAPI:
 
     register_exception_handlers(app)
     app.include_router(health.router, prefix=API_V1_PREFIX)
+    app.include_router(auth.router, prefix=API_V1_PREFIX)
+    app.include_router(users.router, prefix=API_V1_PREFIX)
+    app.include_router(uploads.router, prefix=API_V1_PREFIX)
 
     return app
 

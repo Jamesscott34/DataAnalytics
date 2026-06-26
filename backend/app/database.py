@@ -4,7 +4,7 @@ Configures the engine, session factory, and declarative base only.
 ORM models live in ``app.models``; this module does not define tables.
 """
 
-from collections.abc import AsyncIterator, Generator
+from collections.abc import Generator
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
