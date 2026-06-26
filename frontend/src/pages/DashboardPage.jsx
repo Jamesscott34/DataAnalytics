@@ -21,7 +21,7 @@ export function DashboardPage() {
         </button>
       </header>
       <nav aria-label="Secondary">
-        <Link to="/health">API health</Link>
+        <Link to="/upload">Upload CSV</Link> <Link to="/health">API health</Link>
       </nav>
     </main>
   );

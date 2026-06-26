@@ -83,7 +83,7 @@
 
 ---
 
-## Task 7 — Secure CSV upload
+## Task 7 — Secure CSV upload ✅
 
 | Field | Value |
 |-------|-------|
@@ -461,7 +461,8 @@ Complete.
 - Task 5: `.env` config, logging, error responses (`eb5172b`)
 
 ### Phase 2 — Auth and file pipeline (Tasks 6–11)
-In progress. Task 6 complete (JWT auth, RBAC, login UI). Next: Task 7 (CSV upload).
+In progress. Tasks 6–7 complete (JWT auth, RBAC, login UI, secure CSV upload).
+Next: Task 8 (Python-only security scanner).
 
 ### Phase 3 — Analysis services (Tasks 12–19)
 Not started. EDA, SQL, regression, classification, clustering, time series, similarity.
