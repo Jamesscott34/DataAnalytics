@@ -1,9 +1,10 @@
 """Standard error response tests."""
 
-from app.main import create_app
-from app.utils.response_utils import build_error_response, build_validation_error
 from fastapi import status
 from fastapi.testclient import TestClient
+
+from app.main import create_app
+from app.utils.response_utils import build_error_response, build_validation_error
 
 
 def test_build_error_response_shape() -> None:

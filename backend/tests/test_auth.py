@@ -2,9 +2,10 @@
 
 from datetime import UTC, datetime, timedelta
 
-from app.config import get_settings
 from fastapi.testclient import TestClient
 from jose import jwt
+
+from app.config import get_settings
 
 
 def _register(

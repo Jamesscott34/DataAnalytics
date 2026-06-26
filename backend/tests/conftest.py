@@ -3,25 +3,36 @@
 from collections.abc import Generator
 
 import pytest
-from app.database import Base, SessionLocal, engine, get_db
-from app.main import app
 from fastapi.testclient import TestClient
-from sqlalchemy import delete
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, delete
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from app.database import Base, get_db
+from app.main import app
+
+TEST_DATABASE_URL = "sqlite:///:memory:"
+
+test_engine = create_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
 @pytest.fixture(scope="session", autouse=True)
 def create_tables() -> Generator[None, None, None]:
-    """Create database tables once per test session."""
-    Base.metadata.create_all(bind=engine)
+    """Create isolated in-memory database tables once per test session."""
+    Base.metadata.create_all(bind=test_engine)
     yield
-    Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=test_engine)
 
 
 @pytest.fixture
 def db_session() -> Generator[Session, None, None]:
     """Provide a database session cleared after each test."""
-    session = SessionLocal()
+    session = TestSessionLocal()
     try:
         yield session
     finally:

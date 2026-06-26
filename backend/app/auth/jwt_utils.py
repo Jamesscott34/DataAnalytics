@@ -12,8 +12,9 @@ from jose import jwt
 
 from app.config import get_settings
 
-TOKEN_TYPE_ACCESS = "access"  # nosec B105 - JWT claim label, not a credential
-TOKEN_TYPE_REFRESH = "refresh"  # nosec B105 - JWT claim label, not a credential
+# These constants are JWT claim labels, not secrets or credentials.
+TOKEN_TYPE_ACCESS = "access"  # nosec B105
+TOKEN_TYPE_REFRESH = "refresh"  # nosec B105
 
 
 def _utc_now() -> datetime:

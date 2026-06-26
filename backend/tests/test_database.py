@@ -3,24 +3,13 @@
 import os
 from pathlib import Path
 
-import pytest
 from alembic import command
 from alembic.config import Config
-from app.database import SessionLocal, engine
-from app.models import UploadedFile, User, UserSession
-from app.models.user import UserRole
-from sqlalchemy import inspect
+from sqlalchemy import Engine, create_engine, inspect
 from sqlalchemy.orm import Session
 
-
-@pytest.fixture
-def db_session() -> Session:
-    """Provide a database session rolled back after each test."""
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
+from app.models import UploadedFile, User, UserSession
+from app.models.user import UserRole
 
 
 def test_models_import() -> None:
@@ -48,20 +37,13 @@ def test_alembic_upgrade_head(tmp_path: Path) -> None:
     assert "uploaded_files" in tables
 
 
-def engine_from_url(url: str):
+def engine_from_url(url: str) -> Engine:
     """Create an engine for the given URL (test helper)."""
-    from sqlalchemy import create_engine
-
     return create_engine(url)
 
 
 def test_session_fixture_can_query(db_session: Session) -> None:
-    """Session fixture returns rows from the users table."""
-    # Requires migrations on default DB; skip if tables missing.
-    inspector = inspect(engine)
-    if "users" not in inspector.get_table_names():
-        pytest.skip("Database not migrated")
-
+    """Session fixture queries users from the isolated test database."""
     count = db_session.query(User).count()
     assert count >= 0
 

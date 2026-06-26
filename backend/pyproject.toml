@@ -34,3 +34,6 @@ pythonpath = ["."]
 
 [tool.bandit]
 exclude_dirs = ["tests"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

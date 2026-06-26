@@ -5,7 +5,6 @@ role-based access on protected routes.
 """
 
 from collections.abc import Callable
-
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status

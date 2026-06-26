@@ -123,7 +123,8 @@ class AuthService:
         return TokenResponse(
             access_token=access_token,
             refresh_token=refresh_token,
-            token_type="bearer",  # nosec B106 - OAuth token type label, not a password
+            # OAuth token type label, not a password or secret.
+            token_type="bearer",  # nosec B106
             expires_in=expires_in,
         )
 
