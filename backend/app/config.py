@@ -50,8 +50,15 @@ class Settings(BaseSettings):
     )
 
     upload_dir: str = Field(default="./data/uploads", alias="UPLOAD_DIR")
-    max_upload_size_mb: int = Field(default=50, alias="MAX_UPLOAD_SIZE_MB")
-    temp_assets_dir: str = Field(default="./temp_assets", alias="TEMP_ASSETS_DIR")
+    scan_results_dir: str = Field(default="./data/scan_results", alias="SCAN_RESULTS_DIR")
+    max_upload_size_mb: int = Field(default=250, alias="MAX_UPLOAD_SIZE_MB")
+    large_file_warning_mb: int = Field(default=50, alias="LARGE_FILE_WARNING_MB")
+    temp_assets_dir: str = Field(default="../temp_assets", alias="TEMP_ASSETS_DIR")
+    assets_dir: str = Field(default="../assets", alias="ASSETS_DIR")
+    asset_manifest_path: str = Field(
+        default="./data/asset_manifest.enc",
+        alias="ASSET_MANIFEST_PATH",
+    )
 
     rate_limit_upload_per_minute: int = Field(
         default=10,
@@ -85,6 +92,11 @@ class Settings(BaseSettings):
     def max_upload_size_bytes(self) -> int:
         """Maximum upload size in bytes derived from megabyte setting."""
         return self.max_upload_size_mb * 1024 * 1024
+
+    @property
+    def large_file_warning_bytes(self) -> int:
+        """Large-file verification threshold in bytes."""
+        return self.large_file_warning_mb * 1024 * 1024
 
 
 @lru_cache

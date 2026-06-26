@@ -14,6 +14,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 if TYPE_CHECKING:
+    from app.models.csv_data import CsvData
+    from app.models.file_version import FileVersion
     from app.models.security_scan import SecurityScan
     from app.models.user import User
 
@@ -59,4 +61,16 @@ class UploadedFile(Base):
         "SecurityScan",
         back_populates="file",
         cascade="all, delete-orphan",
+    )
+    versions: Mapped[list["FileVersion"]] = relationship(
+        "FileVersion",
+        back_populates="file",
+        cascade="all, delete-orphan",
+        order_by="FileVersion.version_number",
+    )
+    csv_rows: Mapped[list["CsvData"]] = relationship(
+        "CsvData",
+        back_populates="file",
+        cascade="all, delete-orphan",
+        order_by="CsvData.row_index",
     )

@@ -107,7 +107,7 @@
 
 ---
 
-## Task 9 — Temp assets
+## Task 9 — Temp assets ✅
 
 | Field | Value |
 |-------|-------|
@@ -119,7 +119,7 @@
 
 ---
 
-## Task 10 — Audit logging
+## Task 10 — Audit logging ✅
 
 | Field | Value |
 |-------|-------|
@@ -131,7 +131,7 @@
 
 ---
 
-## Task 11 — Dataset versioning
+## Task 11 — Dataset versioning ✅
 
 | Field | Value |
 |-------|-------|
@@ -143,7 +143,7 @@
 
 ---
 
-## Task 12 — EDA service
+## Task 12 — EDA service ✅
 
 | Field | Value |
 |-------|-------|
@@ -155,7 +155,7 @@
 
 ---
 
-## Task 13 — SQL analysis
+## Task 13 — SQL analysis ✅
 
 | Field | Value |
 |-------|-------|
@@ -461,11 +461,12 @@ Complete.
 - Task 5: `.env` config, logging, error responses (`eb5172b`)
 
 ### Phase 2 — Auth and file pipeline (Tasks 6–11)
-In progress. Tasks 6–8 complete (JWT auth, RBAC, login UI, secure CSV upload,
-Python-only scanner). Next: Task 9 (`temp_assets` selector endpoint and UI).
+Complete. Tasks 6–11 delivered auth, secure upload, scanner, temp assets,
+integrity manifest, audit logging, and dataset versioning. Task 12 (EDA service)
+is complete. Next: Task 14 (EDA UI).
 
 ### Phase 3 — Analysis services (Tasks 12–19)
-Not started. EDA, SQL, regression, classification, clustering, time series, similarity.
+In progress. Tasks 12–13 complete (EDA service, SQL analysis). Next: Task 14 (EDA UI).
 
 ### Phase 4 — Insights, UI, and export (Tasks 20–25)
 Not started. Explainability, business KPIs, charts, PDF/JSON/CSV export.

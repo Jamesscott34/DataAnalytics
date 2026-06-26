@@ -15,6 +15,8 @@ frontend/dist/
 
 # Uploads & datasets
 backend/data/
+asset_manifest.enc
+*.enc
 *.csv
 !temp_assets/*_sample.csv
 

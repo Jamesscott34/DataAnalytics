@@ -36,9 +36,36 @@ The scanner currently checks uploaded CSV files for:
 - Uploaded files are stored outside the frontend public directory.
 - Uploads require an authenticated Admin or Analyst user.
 - The API stores a SHA-256 hash for deduplication.
+- Files larger than 50 MB require browser-side SHA-256 calculation and user
+  confirmation before upload.
+- When the browser sends a SHA-256 hash, the backend recomputes the hash and
+  rejects the upload if the values do not match.
 - Scanner results are persisted in the `security_scans` table.
 - The frontend displays scanner status, risk score, issues, and recommended
   action after upload.
+
+## Large File Handling
+
+The default absolute upload cap is 250 MB. Files above the 50 MB verification
+threshold are still allowed when they pass validation and scanner checks, but
+the user must inspect and confirm the browser-computed SHA-256 hash first.
+
+The backend remains the source of truth: it calculates its own SHA-256 hash,
+compares it with the browser value when provided, applies strict CSV and
+scanner rules, then returns the final hash and scan status to the GUI.
+
+## Watched Folder Integrity Manifest
+
+On backend startup the application scans `temp_assets/` and `assets/`, computes
+SHA-256 hashes for every file, and compares them against a password-protected
+encrypted manifest stored at `backend/data/asset_manifest.enc`.
+
+- First run: analysts create a manifest password and all discovered files are
+  recorded.
+- Later runs: the user unlocks the manifest once per server session (and once
+  per browser session) so the UI can report new, modified, or removed files.
+- Approved changes are written back to the encrypted manifest after explicit
+  user confirmation in the GUI.
 
 ## Limitations
 

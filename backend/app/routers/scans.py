@@ -75,7 +75,7 @@ def get_scan_history(
 def rescan_file(
     file_id: int,
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(require_analyst)],
+    current_user: Annotated[User, Depends(require_analyst)],
 ) -> ScanResult:
     """Rescan a stored uploaded file and persist the result."""
     file = _get_file_or_404(db, file_id)
@@ -90,7 +90,13 @@ def rescan_file(
         filename=file.original_filename,
         content=path.read_bytes(),
     )
-    security_scan_service.persist_scan(db, file_id=file.id, result=result)
+    security_scan_service.persist_scan(
+        db,
+        file_id=file.id,
+        result=result,
+        user_id=current_user.id,
+        filename=file.original_filename,
+    )
     return result
 
 

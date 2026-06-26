@@ -32,6 +32,7 @@ class UploadResponse(BaseModel):
     is_duplicate: bool
     version_number: int = 1
     scan_result: ScanResult | None = None
+    client_hash_match: bool | None = None
 
 
 class UploadMetadata(BaseModel):
@@ -54,3 +55,27 @@ class UploadListResponse(BaseModel):
 
     items: list[UploadMetadata]
     total: int
+
+
+class DuplicateUploadResponse(BaseModel):
+    """Returned when an upload matches an existing file hash."""
+
+    error: str = "duplicate_upload"
+    message: str
+    file_hash: str
+    existing_file: UploadMetadata
+    scan_result: ScanResult
+
+
+class AssetFileInfo(BaseModel):
+    """Metadata for a CSV file available in temp_assets."""
+
+    name: str
+    size_bytes: int
+    safe: bool = True
+
+
+class AssetListResponse(BaseModel):
+    """List of selectable temp asset files."""
+
+    files: list[AssetFileInfo]

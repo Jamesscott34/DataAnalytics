@@ -26,11 +26,24 @@ def _headers(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
 
-def _upload(client: TestClient, token: str, filename: str, content: bytes):
+def _upload(
+    client: TestClient,
+    token: str,
+    filename: str,
+    content: bytes,
+    client_sha256: str | None = None,
+    duplicate_action: str | None = None,
+):
     """Upload bytes as a multipart CSV file."""
+    data = {}
+    if client_sha256 is not None:
+        data["client_sha256"] = client_sha256
+    if duplicate_action is not None:
+        data["duplicate_action"] = duplicate_action
     return client.post(
         "/api/v1/uploads",
         headers=_headers(token),
+        data=data,
         files={"file": (filename, content, "text/csv")},
     )
 
@@ -101,14 +114,94 @@ def test_invalid_csv_format_returns_400(client: TestClient) -> None:
     assert response.json()["message"]
 
 
-def test_duplicate_file_detection_returns_existing_hash(client: TestClient) -> None:
-    """Uploading the same CSV twice returns duplicate metadata."""
+def test_duplicate_upload_returns_409_not_500(client: TestClient) -> None:
+    """Duplicate uploads return structured 409 responses after audit commits."""
     token = _analyst_token(client)
     content = b"name,value\nalpha,1\n"
-    first = _upload(client, token, "first.csv", content)
-    second = _upload(client, token, "second.csv", content)
+    first = _upload(client, token, "dup409-a.csv", content)
+    second = _upload(client, token, "dup409-b.csv", content)
+    assert first.status_code == 201
+    assert second.status_code == 409
+    body = second.json()
+    assert body["error"] == "duplicate_upload"
+    assert body["existing_file"]["original_filename"] == "dup409-a.csv"
+
+
+def test_duplicate_use_existing_action(client: TestClient) -> None:
+    """Users can continue with the existing duplicate file."""
+    token = _analyst_token(client)
+    content = b"name,value\nbeta,2\n"
+    first = _upload(client, token, "keep.csv", content)
+    second = _upload(
+        client,
+        token,
+        "keep-copy.csv",
+        content,
+        duplicate_action="use_existing",
+    )
     assert first.status_code == 201
     assert second.status_code == 201
     assert second.json()["is_duplicate"] is True
-    assert second.json()["file_hash"] == first.json()["file_hash"]
     assert second.json()["file_id"] == first.json()["file_id"]
+
+
+def test_duplicate_replace_action(client: TestClient) -> None:
+    """Users can replace an existing duplicate with a new upload record."""
+    token = _analyst_token(client)
+    content = b"name,value\ngamma,3\n"
+    first = _upload(client, token, "replace-me.csv", content)
+    second = _upload(
+        client,
+        token,
+        "replace-me-new.csv",
+        content,
+        duplicate_action="replace",
+    )
+    assert first.status_code == 201
+    assert second.status_code == 201
+    assert second.json()["is_duplicate"] is False
+    assert second.json()["filename"] == "replace-me-new.csv"
+
+
+def test_delete_upload_removes_file(client: TestClient) -> None:
+    """Analysts can delete their own uploaded files."""
+    token = _analyst_token(client)
+    content = b"name,value\ndelta,4\n"
+    uploaded = _upload(client, token, "delete-me.csv", content)
+    file_id = uploaded.json()["file_id"]
+    response = client.delete(
+        f"/api/v1/uploads/{file_id}",
+        headers=_headers(token),
+    )
+    assert response.status_code == 200
+    assert response.json()["message"] == "Uploaded file deleted"
+
+
+def test_client_hash_match_recorded(client: TestClient) -> None:
+    """Browser-provided SHA-256 is compared with backend hash."""
+    token = _analyst_token(client)
+    content = b"name,value\nalpha,1\n"
+    response = _upload(
+        client,
+        token,
+        "hash.csv",
+        content,
+        client_sha256=sha256_bytes(content),
+    )
+    assert response.status_code == 201
+    assert response.json()["client_hash_match"] is True
+
+
+def test_client_hash_mismatch_rejected(client: TestClient) -> None:
+    """Mismatched browser-provided SHA-256 rejects the upload."""
+    token = _analyst_token(client)
+    content = b"name,value\nalpha,1\n"
+    response = _upload(
+        client,
+        token,
+        "hash-mismatch.csv",
+        content,
+        client_sha256="0" * 64,
+    )
+    assert response.status_code == 400
+    assert "does not match" in response.json()["message"]

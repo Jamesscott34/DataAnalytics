@@ -1,0 +1,6 @@
+region,pest_type,incidents,month
+North,rodent,12,January
+South,insect,8,January
+East,rodent,5,February
+West,insect,15,February
+North,insect,9,March

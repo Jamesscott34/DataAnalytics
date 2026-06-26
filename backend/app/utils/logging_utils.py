@@ -61,7 +61,7 @@ def log_audit_event(
         "result": result,
         "user_id": user_id,
         "file_hash": file_hash,
-        "filename": filename,
+        "upload_filename": filename,
         "ip_address": ip_address,
     }
     if extra:

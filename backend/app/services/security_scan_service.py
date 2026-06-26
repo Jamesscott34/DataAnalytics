@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.models.security_scan import ScanStatus, SecurityScan
 from app.schemas.upload import ScanResult
+from app.services.audit_service import audit_service
 from app.utils.encoding_utils import EncodingValidationError, decode_csv_bytes
 from app.utils.file_utils import FileValidationError, validate_filename
 from app.utils.hash_utils import sha256_bytes
@@ -105,6 +106,9 @@ class SecurityScanService:
         *,
         file_id: int,
         result: ScanResult,
+        user_id: int | None = None,
+        filename: str | None = None,
+        ip_address: str | None = None,
     ) -> SecurityScan:
         """Persist a scan result for an uploaded file.
 
@@ -127,6 +131,21 @@ class SecurityScanService:
         db.add(scan)
         db.commit()
         db.refresh(scan)
+        audit_service.record(
+            db,
+            event_type="scan",
+            action="persist",
+            result=result.status,
+            user_id=user_id,
+            file_id=file_id,
+            file_hash=result.file_hash,
+            filename=filename,
+            ip_address=ip_address,
+            metadata={
+                "risk_score": result.risk_score,
+                "issue_count": len(result.issues),
+            },
+        )
         return scan
 
     def latest_for_file(self, db: Session, file_id: int) -> SecurityScan | None:

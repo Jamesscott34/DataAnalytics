@@ -76,6 +76,27 @@ def validate_filename(filename: str) -> None:
         raise FileValidationError("Executable or script extensions are blocked")
 
 
+def resolve_asset_path(base_dir: Path, filename: str) -> Path:
+    """Resolve a temp asset filename to a safe path inside base_dir.
+
+    Args:
+        base_dir: Trusted temp assets directory.
+        filename: Client-selected asset filename.
+
+    Returns:
+        Resolved path to the asset file.
+
+    Raises:
+        FileValidationError: If the filename is unsafe or the file is missing.
+    """
+    validate_filename(filename)
+    candidate = base_dir / Path(filename).name
+    resolved = ensure_within_directory(base_dir, candidate)
+    if not resolved.is_file():
+        raise FileValidationError("Asset file not found")
+    return resolved
+
+
 def ensure_within_directory(base_dir: Path, candidate: Path) -> Path:
     """Resolve a path and ensure it remains inside a base directory.
 

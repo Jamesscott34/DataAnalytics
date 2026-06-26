@@ -15,7 +15,22 @@ from app.exceptions import register_exception_handlers
 from app.logging_config import configure_logging
 from app.middleware.security import SecurityHeadersMiddleware
 from app.middleware.timing import RequestTimingMiddleware
-from app.routers import auth, health, scans, uploads, users
+from app.routers import (
+    asset_integrity,
+    assets,
+    audit,
+    auth,
+    eda,
+    export,
+    groups,
+    health,
+    models_regression,
+    quick_scan,
+    scans,
+    sql,
+    uploads,
+    users,
+)
 
 API_V1_PREFIX = "/api/v1"
 
@@ -24,7 +39,11 @@ API_V1_PREFIX = "/api/v1"
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Application startup and shutdown lifecycle hooks."""
     configure_logging()
+    from app.services.asset_integrity_service import asset_integrity_service
+
+    asset_integrity_service.refresh_disk_scan()
     yield
+    asset_integrity_service.lock_manifest()
 
 
 def create_app() -> FastAPI:
@@ -58,7 +77,16 @@ def create_app() -> FastAPI:
     app.include_router(auth.router, prefix=API_V1_PREFIX)
     app.include_router(users.router, prefix=API_V1_PREFIX)
     app.include_router(uploads.router, prefix=API_V1_PREFIX)
+    app.include_router(assets.router, prefix=API_V1_PREFIX)
+    app.include_router(asset_integrity.router, prefix=API_V1_PREFIX)
+    app.include_router(audit.router, prefix=API_V1_PREFIX)
     app.include_router(scans.router, prefix=API_V1_PREFIX)
+    app.include_router(eda.router, prefix=API_V1_PREFIX)
+    app.include_router(groups.router, prefix=API_V1_PREFIX)
+    app.include_router(sql.router, prefix=API_V1_PREFIX)
+    app.include_router(models_regression.router, prefix=API_V1_PREFIX)
+    app.include_router(quick_scan.router, prefix=API_V1_PREFIX)
+    app.include_router(export.router, prefix=API_V1_PREFIX)
 
     return app
 
