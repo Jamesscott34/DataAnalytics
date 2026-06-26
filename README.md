@@ -27,4 +27,5 @@ MIT (see [LICENSE](LICENSE)).
 | Phase | Status |
 |-------|--------|
 | Phase 0 — Planning | Complete |
-| Phase 1 — Implementation (Tasks 1–35) | Not started |
+| Phase 1 — Tasks 1–5 (foundation) | Complete |
+| Phase 1 — Tasks 6–35 | In progress |
