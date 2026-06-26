@@ -42,7 +42,9 @@ export function AuthProvider({ children }) {
       setUser(profile);
     } catch (err) {
       setUser(null);
-      setError(err.message);
+      if (getAccessToken()) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }

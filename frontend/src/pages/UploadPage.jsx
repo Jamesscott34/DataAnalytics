@@ -7,10 +7,12 @@ import { UploadForm } from '../components/UploadForm.jsx';
  */
 export function UploadPage() {
   return (
-    <main>
-      <header>
+    <main className="page-shell page-shell--wide">
+      <header className="page-header">
         <h1>Upload dataset</h1>
-        <p>Upload a CSV file for validation and later analysis.</p>
+        <p className="page-lead">
+          Upload a CSV file for validation and later analysis.
+        </p>
       </header>
       <UploadForm />
     </main>
