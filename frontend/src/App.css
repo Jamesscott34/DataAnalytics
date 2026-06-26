@@ -75,6 +75,26 @@ button {
   margin-bottom: 1rem;
 }
 
+.upload-panel {
+  background: #fff;
+  border: 1px solid #dde3ea;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.upload-panel label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.upload-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #eef6ff;
+  border-radius: 6px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

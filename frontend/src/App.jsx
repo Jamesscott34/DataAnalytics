@@ -4,6 +4,7 @@ import { AuthProvider } from './hooks/useAuth.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { HealthStatusPage } from './pages/HealthStatusPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
+import { UploadPage } from './pages/UploadPage.jsx';
 import './App.css';
 
 /**
@@ -24,6 +25,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload"
+            element={
+              <ProtectedRoute roles={['admin', 'analyst']}>
+                <UploadPage />
               </ProtectedRoute>
             }
           />
