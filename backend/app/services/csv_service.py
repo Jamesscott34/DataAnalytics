@@ -145,8 +145,11 @@ class CSVService:
 
     def _summarize_csv(self, text: str) -> CSVSummary:
         """Parse CSV text and return row/column counts."""
-        reader = csv.reader(StringIO(text))
-        rows = list(reader)
+        reader = csv.reader(StringIO(text, newline=""))
+        try:
+            rows = list(reader)
+        except csv.Error as exc:
+            raise CSVUploadError(f"Invalid CSV format: {exc}") from exc
         if not rows or not rows[0]:
             raise CSVUploadError("CSV must contain a header row")
         header_width = len(rows[0])

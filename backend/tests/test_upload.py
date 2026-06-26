@@ -93,6 +93,14 @@ def test_oversized_file_blocked(client: TestClient, monkeypatch) -> None:
     assert response.status_code == 400
 
 
+def test_invalid_csv_format_returns_400(client: TestClient) -> None:
+    """Malformed CSV parser errors are converted to client errors."""
+    token = _analyst_token(client)
+    response = _upload(client, token, "bad-newline.csv", b'a,b\n"broken\n1,2\n')
+    assert response.status_code == 400
+    assert response.json()["message"]
+
+
 def test_duplicate_file_detection_returns_existing_hash(client: TestClient) -> None:
     """Uploading the same CSV twice returns duplicate metadata."""
     token = _analyst_token(client)
