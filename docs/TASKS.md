@@ -449,7 +449,7 @@
 
 ## Project status
 
-**Last green commit:** `05cb8db`
+**Last green commit:** `f4cb190`
 
 ### Phase 0 — Planning
 Complete. Architecture, API, database schema, component tree, and this task list.
