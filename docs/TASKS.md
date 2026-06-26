@@ -95,7 +95,7 @@
 
 ---
 
-## Task 8 — Security scanner
+## Task 8 — Security scanner ✅
 
 | Field | Value |
 |-------|-------|
@@ -461,8 +461,8 @@ Complete.
 - Task 5: `.env` config, logging, error responses (`eb5172b`)
 
 ### Phase 2 — Auth and file pipeline (Tasks 6–11)
-In progress. Tasks 6–7 complete (JWT auth, RBAC, login UI, secure CSV upload).
-Next: Task 8 (Python-only security scanner).
+In progress. Tasks 6–8 complete (JWT auth, RBAC, login UI, secure CSV upload,
+Python-only scanner). Next: Task 9 (`temp_assets` selector endpoint and UI).
 
 ### Phase 3 — Analysis services (Tasks 12–19)
 Not started. EDA, SQL, regression, classification, clustering, time series, similarity.

@@ -2,7 +2,7 @@
 
 Portfolio-grade full-stack analytics platform: secure CSV ingestion, exploratory data analysis, predictive ML, SQL analytics, business KPIs, and professional report export.
 
-**Current phase:** Phase 2 — Task 8 (Python-only security scanner) next.
+**Current phase:** Phase 2 — Task 9 (`temp_assets` selector) next.
 
 ## Planning documents
 
@@ -28,7 +28,7 @@ MIT (see [LICENSE](LICENSE)).
 |-------|-------|--------|
 | 0 | Planning docs | Done |
 | 1 | Tasks 1–5 — scaffold, API, frontend shell, DB, config | Done |
-| 2 | Tasks 6–11 — auth, upload, scanner, assets, audit, versioning | In progress (Tasks 6–7 done) |
+| 2 | Tasks 6–11 — auth, upload, scanner, assets, audit, versioning | In progress (Tasks 6–8 done) |
 | 3 | Tasks 12–19 — EDA, SQL, ML models | Pending |
 | 4 | Tasks 20–25 — explainability, business, charts, export | Pending |
 | 5 | Tasks 26–28 — jobs, plugins, monitoring | Pending |

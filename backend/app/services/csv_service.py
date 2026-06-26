@@ -13,7 +13,8 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.models.uploaded_file import FileSource, UploadedFile
-from app.schemas.upload import UploadResponse
+from app.schemas.upload import ScanResult, UploadResponse
+from app.services.security_scan_service import security_scan_service
 from app.utils.encoding_utils import EncodingValidationError, decode_csv_bytes
 from app.utils.file_utils import (
     FileValidationError,
@@ -71,13 +72,26 @@ class CSVService:
         text = self._decode(content)
         summary = self._summarize_csv(text)
         file_hash = sha256_bytes(content)
+        scan_result = security_scan_service.scan_bytes(
+            filename=safe_filename,
+            content=content,
+        )
 
         existing = (
             db.query(UploadedFile).filter(UploadedFile.file_hash == file_hash).first()
         )
         if existing is not None:
+            security_scan_service.persist_scan(
+                db,
+                file_id=existing.id,
+                result=scan_result,
+            )
             logger.info("duplicate_csv_upload", extra={"file_id": existing.id})
-            return self._to_response(existing, is_duplicate=True)
+            return self._to_response(
+                existing,
+                is_duplicate=True,
+                scan_result=scan_result,
+            )
 
         upload_dir = Path(settings.upload_dir)
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -101,7 +115,12 @@ class CSVService:
             "csv_uploaded",
             extra={"file_id": record.id, "file_hash": file_hash},
         )
-        return self._to_response(record, is_duplicate=False)
+        security_scan_service.persist_scan(db, file_id=record.id, result=scan_result)
+        return self._to_response(
+            record,
+            is_duplicate=False,
+            scan_result=scan_result,
+        )
 
     def _validate_size(self, content: bytes, max_size_bytes: int) -> None:
         """Validate upload size constraints."""
@@ -150,7 +169,13 @@ class CSVService:
         resolved_target.write_bytes(content)
         return resolved_target
 
-    def _to_response(self, file: UploadedFile, *, is_duplicate: bool) -> UploadResponse:
+    def _to_response(
+        self,
+        file: UploadedFile,
+        *,
+        is_duplicate: bool,
+        scan_result: ScanResult,
+    ) -> UploadResponse:
         """Convert an UploadedFile ORM object into an UploadResponse."""
         return UploadResponse(
             file_id=file.id,
@@ -161,6 +186,7 @@ class CSVService:
             column_count=file.column_count or 0,
             is_duplicate=is_duplicate,
             version_number=1,
+            scan_result=scan_result,
         )
 
 

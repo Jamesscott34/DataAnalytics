@@ -37,6 +37,14 @@ describe('UploadForm', () => {
       column_count: 2,
       is_duplicate: false,
       version_number: 1,
+      scan_result: {
+        status: 'safe',
+        issues: [],
+        risk_score: 0,
+        recommended_action: 'File passed scanner checks and can be analysed.',
+        scan_timestamp: '2026-06-26T17:00:00Z',
+        file_hash: 'a'.repeat(64),
+      },
     });
 
     render(<UploadForm />);
@@ -47,5 +55,6 @@ describe('UploadForm', () => {
     await waitFor(() => {
       expect(screen.getByText(/uploaded: data.csv/i)).toBeInTheDocument();
     });
+    expect(screen.getByText(/security scan: safe/i)).toBeInTheDocument();
   });
 });

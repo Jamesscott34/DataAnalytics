@@ -88,11 +88,39 @@ button {
   font-weight: 500;
 }
 
+.upload-help {
+  color: #475569;
+}
+
 .upload-result {
   margin-top: 1rem;
   padding: 1rem;
   background: #eef6ff;
   border-radius: 6px;
+}
+
+.scanner-panel {
+  margin-top: 1rem;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.scanner-panel--safe {
+  background: #d1fae5;
+  border: 1px solid #34d399;
+  color: #064e3b;
+}
+
+.scanner-panel--warning {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #78350f;
+}
+
+.scanner-panel--blocked {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #7f1d1d;
 }
 
 @media (prefers-reduced-motion: reduce) {

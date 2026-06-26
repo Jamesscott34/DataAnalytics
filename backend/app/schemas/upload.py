@@ -9,6 +9,17 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
+class ScanResult(BaseModel):
+    """Python-only security scanner result."""
+
+    status: str
+    issues: list[str]
+    risk_score: int
+    recommended_action: str
+    scan_timestamp: datetime
+    file_hash: str
+
+
 class UploadResponse(BaseModel):
     """Response returned after a CSV upload is accepted."""
 
@@ -20,6 +31,7 @@ class UploadResponse(BaseModel):
     column_count: int
     is_duplicate: bool
     version_number: int = 1
+    scan_result: ScanResult | None = None
 
 
 class UploadMetadata(BaseModel):

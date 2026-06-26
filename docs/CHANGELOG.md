@@ -16,3 +16,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pydantic settings, JSON logging, security headers, and standard error responses.
 - JWT authentication with refresh tokens, RBAC (admin/analyst/viewer), and login UI.
 - Secure CSV upload endpoint with filename validation, size checks, SHA-256 deduplication, and upload UI.
+- Python-only CSV security scanner with persisted scan results and UI status panel.
