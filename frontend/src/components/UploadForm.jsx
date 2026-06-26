@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useUpload } from '../hooks/useUpload.js';
+import { ScannerResultPanel } from './ScannerResultPanel.jsx';
 
 /**
  * UploadForm
@@ -18,6 +19,10 @@ export function UploadForm() {
   return (
     <section className="upload-panel" aria-labelledby="upload-heading">
       <h2 id="upload-heading">Upload CSV</h2>
+      <p className="upload-help">
+        Files are checked for unsafe names, binary content, CSV injection, and
+        suspicious payloads before analysis.
+      </p>
       <form onSubmit={handleSubmit}>
         <label htmlFor="csv-file">CSV file</label>
         <input
@@ -41,6 +46,7 @@ export function UploadForm() {
           <p>Duplicate: {result.is_duplicate ? 'yes' : 'no'}</p>
         </div>
       )}
+      <ScannerResultPanel result={result?.scan_result ?? null} />
     </section>
   );
 }

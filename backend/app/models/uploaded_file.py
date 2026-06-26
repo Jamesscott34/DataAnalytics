@@ -14,6 +14,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 if TYPE_CHECKING:
+    from app.models.security_scan import SecurityScan
     from app.models.user import User
 
 
@@ -54,3 +55,8 @@ class UploadedFile(Base):
     )
 
     owner: Mapped["User | None"] = relationship("User", back_populates="uploaded_files")
+    security_scans: Mapped[list["SecurityScan"]] = relationship(
+        "SecurityScan",
+        back_populates="file",
+        cascade="all, delete-orphan",
+    )
