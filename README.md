@@ -24,7 +24,7 @@ MIT (see [LICENSE](LICENSE)).
 
 ## Development status
 
-**Last commit:** `f4cb190`
+**Last commit:** `96eff55`
 
 | Phase | Scope | Status |
 |-------|-------|--------|
