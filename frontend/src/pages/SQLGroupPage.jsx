@@ -87,7 +87,7 @@ export function SQLGroupPage() {
       <header className="page-header">
         <h1>{group?.name ?? 'Dataset group SQL'}</h1>
         <p className="page-lead">
-          Import all grouped CSV files (headers only), then run SQL across tables — for
+          Import all grouped CSV files (headers only), then run SQL across tables, for
           example JOIN customers with prices.
         </p>
         <p className="page-meta">
@@ -170,7 +170,7 @@ export function SQLGroupPage() {
             onClick={() => runQuery(query)}
             disabled={loading || !query.trim()}
           >
-            Continue — run query
+            Continue: run query
           </button>
         </section>
       )}

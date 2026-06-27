@@ -26,7 +26,7 @@ export function VersionTimeline({ history, onCompare }) {
         <ol className="version-list">
           {versions.map((version) => (
             <li key={version.id}>
-              <strong>v{version.version_number}</strong> — {version.upload_event}
+              <strong>v{version.version_number}</strong>: {version.upload_event}
               <div>{new Date(version.created_at).toLocaleString()}</div>
               {version.notes && <div>{version.notes}</div>}
             </li>

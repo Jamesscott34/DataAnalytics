@@ -172,7 +172,7 @@ export function SQLAnalysisPage() {
       </ol>
 
       <section className="panel-card">
-        <h2>Step 1 — Import column headers</h2>
+        <h2>Step 1: Import column headers</h2>
         <p>
           Rows are loaded on the server, but you only see column names until you run a
           query.
@@ -196,7 +196,7 @@ export function SQLAnalysisPage() {
 
       {importInfo && step !== 'import' && (
         <section className="panel-card">
-          <h2>Step 2 — Choose or write SQL</h2>
+          <h2>Step 2: Choose or write SQL</h2>
           <SQLCommandPicker
             tableName={importInfo.table_name}
             columns={importInfo.columns}
@@ -223,7 +223,7 @@ export function SQLAnalysisPage() {
               onClick={() => runQuery(query)}
               disabled={loading || !query.trim()}
             >
-              Continue — run query
+              Continue: run query
             </button>
           </div>
         </section>
@@ -239,7 +239,7 @@ export function SQLAnalysisPage() {
       {step === 'results' && result && (
         <section className="panel-card" aria-live="polite">
           <div className="panel-card-header">
-            <h2>Step 3 — Results ({result.row_count} rows)</h2>
+            <h2>Step 3: Results ({result.row_count} rows)</h2>
             <span className="selection-badge">{selectionSummary}</span>
           </div>
           <div className="button-row">

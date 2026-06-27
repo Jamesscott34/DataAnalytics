@@ -59,13 +59,13 @@ export function buildSqlCommandList(tableName, columns = []) {
   const commands = [
     {
       id: 'view_all',
-      label: 'SELECT * — all rows',
+      label: 'SELECT *: all rows',
       description: 'Return every imported row.',
       sql: `SELECT * FROM "${tableName}"`,
     },
     {
       id: 'count_rows',
-      label: 'COUNT(*) — row total',
+      label: 'COUNT(*): row total',
       description: 'Count how many rows are in the table.',
       sql: `SELECT COUNT(*) AS row_count FROM "${tableName}"`,
     },
