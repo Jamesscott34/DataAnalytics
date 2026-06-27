@@ -25,6 +25,7 @@ from app.schemas.eda import (
     NumericStats,
     TopValue,
 )
+from app.services.classification_service import MAX_DISPLAY_CLASSES
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import (
     coerce_float,
@@ -110,11 +111,14 @@ class EDAService:
         target_columns = [
             column.name
             for column in response.columns
-            if column.inferred_type in {"categorical", "boolean"}
-            or (
-                column.inferred_type in {"integer", "float"}
-                and column.unique_count < response.summary.row_count
-                and column.unique_count <= max(2, response.summary.row_count // 3)
+            if column.unique_count >= 2
+            and column.unique_count <= MAX_DISPLAY_CLASSES
+            and (
+                column.inferred_type in {"categorical", "boolean"}
+                or (
+                    column.inferred_type in {"integer", "float"}
+                    and column.unique_count < response.summary.row_count
+                )
             )
         ]
         feature_columns = [

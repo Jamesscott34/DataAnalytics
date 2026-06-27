@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import require_analyst, require_viewer
@@ -38,15 +39,18 @@ def run_quick_scan(
     "/{file_id}/quick-scan",
     response_model=QuickScanReport,
     summary="Get latest quick scan report",
+    responses={204: {"description": "No quick scan report exists for this file yet"}},
 )
 def get_latest_quick_scan(
     file_id: int,
     _: Annotated[User, Depends(require_viewer)],
-) -> QuickScanReport:
+) -> QuickScanReport | Response:
     """Return the most recent quick-scan report for a file."""
     try:
         return quick_scan_service.get_latest_for_file(file_id)
     except QuickScanError as exc:
+        if "no quick scan report" in str(exc).lower():
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),

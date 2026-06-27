@@ -34,6 +34,9 @@ export async function getLatestQuickScan(fileId) {
   const response = await fetch(`${API_BASE_URL}/files/${fileId}/quick-scan`, {
     headers: authHeaders(false),
   });
+  if (response.status === 204) {
+    return null;
+  }
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     throw new Error(body.message ?? body.detail ?? 'Quick scan report not found');

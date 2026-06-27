@@ -34,9 +34,8 @@ export function useQuickScan(fileId) {
 
   const loadLatest = useCallback(async () => {
     if (!fileId) {
-      return;
+      return null;
     }
-    setLoading(true);
     setError(null);
     try {
       const response = await getLatestQuickScan(fileId);
@@ -45,8 +44,6 @@ export function useQuickScan(fileId) {
     } catch {
       setReport(null);
       return null;
-    } finally {
-      setLoading(false);
     }
   }, [fileId]);
 

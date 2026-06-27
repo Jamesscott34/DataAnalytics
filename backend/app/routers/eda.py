@@ -6,6 +6,7 @@ Exposes exploratory data analysis endpoints for uploaded CSV files.
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import require_analyst, require_viewer
@@ -51,16 +52,19 @@ def run_eda(
     "/{file_id}",
     response_model=EDAResponse,
     summary="Get cached EDA results",
+    responses={204: {"description": "EDA has not been run for this file yet"}},
 )
 def get_eda(
     file_id: int,
     db: Annotated[Session, Depends(get_db)],
     _: Annotated[User, Depends(require_viewer)],
-) -> EDAResponse:
+) -> EDAResponse | Response:
     """Return cached EDA output for a file."""
     try:
         return eda_service.get_cached_for_file(db, file_id=file_id)
     except EDAError as exc:
+        if "not been run" in str(exc).lower():
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),

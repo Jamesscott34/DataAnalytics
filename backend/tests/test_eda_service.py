@@ -126,3 +126,16 @@ def test_eda_column_detail_and_suggestions(client: TestClient) -> None:
     assert "date" in body["date_columns"]
     assert "amount" in body["feature_columns"]
     assert "time_series" in body["suggested_analyses"]
+
+
+def test_get_eda_returns_204_when_not_run(client: TestClient) -> None:
+    """GET EDA returns 204 when analysis has not been run yet."""
+    eda_service.clear_cache()
+    token = _analyst_token(client)
+    file_id = _upload(client, token, "pending.csv", b"x,y\n1,2\n")
+
+    response = client.get(
+        f"/api/v1/eda/{file_id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 204

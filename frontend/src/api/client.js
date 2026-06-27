@@ -1,7 +1,7 @@
 /**
  * HTTP client for the backend API.
  *
- * All fetch calls must go through this module — not directly from components.
+ * All fetch calls must go through this module, not directly from components.
  */
 
 import { getAccessToken, clearTokens } from './tokenStorage.js';

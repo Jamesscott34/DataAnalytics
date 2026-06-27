@@ -43,7 +43,7 @@ export function QuickScanPage() {
           <h1>Full analysis scan</h1>
           <p className="page-lead">
             Choose a CSV to run security review, EDA, SQL import, regression, and
-            classification in one pass — then export everything to Markdown or PDF.
+            classification in one pass, then export everything to Markdown or PDF.
           </p>
         </header>
         <DatasetFilePicker
