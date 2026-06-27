@@ -96,3 +96,39 @@ export async function trainClassification(fileId, payload) {
   }
   return response.json();
 }
+
+export async function runClustering(fileId, payload) {
+  const response = await fetch(`${API_BASE_URL}/models/${fileId}/clustering`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      algorithm: payload.algorithm,
+      feature_columns: payload.featureColumns,
+      n_clusters: payload.nClusters ?? 3,
+      max_k: payload.maxK ?? 8,
+      random_state: payload.randomState ?? 42,
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message ?? body.detail ?? 'Clustering failed');
+  }
+  return response.json();
+}
+
+export async function runPca(fileId, payload) {
+  const response = await fetch(`${API_BASE_URL}/models/${fileId}/pca`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      feature_columns: payload.featureColumns,
+      n_components: payload.nComponents ?? 2,
+      random_state: payload.randomState ?? 42,
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message ?? body.detail ?? 'PCA failed');
+  }
+  return response.json();
+}

@@ -27,8 +27,19 @@ class ClassificationAlgorithmSpec:
     builder: Callable[..., Any]
 
 
+@dataclass(frozen=True)
+class ClusteringAlgorithmSpec:
+    """Metadata for a clustering algorithm."""
+
+    id: str
+    label: str
+    description: str
+    builder: Callable[..., Any]
+
+
 REGRESSION_ALGORITHMS: dict[str, RegressionAlgorithmSpec] = {}
 CLASSIFICATION_ALGORITHMS: dict[str, ClassificationAlgorithmSpec] = {}
+CLUSTERING_ALGORITHMS: dict[str, ClusteringAlgorithmSpec] = {}
 
 
 def register_regression_algorithm(spec: RegressionAlgorithmSpec) -> None:
@@ -83,10 +94,37 @@ def get_classification_algorithm(algorithm_id: str) -> ClassificationAlgorithmSp
     return spec
 
 
+def register_clustering_algorithm(spec: ClusteringAlgorithmSpec) -> None:
+    """Register a clustering algorithm for API discovery and dispatch."""
+    CLUSTERING_ALGORITHMS[spec.id] = spec
+
+
+def list_clustering_algorithms() -> list[ModelAlgorithmInfo]:
+    """Return clustering algorithms exposed by the API."""
+    return [
+        ModelAlgorithmInfo(
+            id=spec.id,
+            label=spec.label,
+            model_type="clustering",
+            description=spec.description,
+        )
+        for spec in CLUSTERING_ALGORITHMS.values()
+    ]
+
+
+def get_clustering_algorithm(algorithm_id: str) -> ClusteringAlgorithmSpec:
+    """Look up a clustering algorithm or raise when unknown."""
+    spec = CLUSTERING_ALGORITHMS.get(algorithm_id)
+    if spec is None:
+        raise KeyError(f"Unknown clustering algorithm: {algorithm_id}")
+    return spec
+
+
 def model_registry_response() -> ModelRegistryResponse:
     """Build the model registry payload for clients."""
     return ModelRegistryResponse(
         regression=list_regression_algorithms(),
         classification=list_classification_algorithms(),
+        clustering=list_clustering_algorithms(),
         plugins=[],
     )

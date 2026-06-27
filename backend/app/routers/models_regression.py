@@ -11,7 +11,11 @@ from app.models.user import User
 from app.schemas.models import (
     ClassificationRequest,
     ClassificationResult,
+    ClusteringRequest,
+    ClusteringResult,
     ModelRegistryResponse,
+    PCARequest,
+    PCAResult,
     RegressionRequest,
     RegressionResult,
 )
@@ -19,6 +23,8 @@ from app.services.classification_service import (
     ClassificationError,
     classification_service,
 )
+from app.services.clustering_service import ClusteringError, clustering_service
+from app.services.pca_service import PCAError, pca_service
 from app.services.plugin_registry import model_registry_response
 from app.services.regression_service import RegressionError, regression_service
 
@@ -93,24 +99,90 @@ def train_classification(
         ) from exc
 
 
+@router.post(
+    "/{file_id}/clustering",
+    response_model=ClusteringResult,
+    summary="Run clustering on an uploaded CSV file",
+)
+def run_clustering(
+    file_id: int,
+    request: ClusteringRequest,
+    db: Annotated[Session, Depends(get_db)],
+    _: Annotated[User, Depends(require_analyst)],
+) -> ClusteringResult:
+    """Cluster rows using k-means or hierarchical clustering."""
+    try:
+        return clustering_service.run_clustering(db, file_id=file_id, request=request)
+    except ClusteringError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
+@router.post(
+    "/{file_id}/pca",
+    response_model=PCAResult,
+    summary="Run PCA on an uploaded CSV file",
+)
+def run_pca(
+    file_id: int,
+    request: PCARequest,
+    db: Annotated[Session, Depends(get_db)],
+    _: Annotated[User, Depends(require_analyst)],
+) -> PCAResult:
+    """Run principal component analysis on numeric feature columns."""
+    try:
+        return pca_service.run_pca(db, file_id=file_id, request=request)
+    except PCAError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
 @router.get(
     "/results/{result_id}",
-    response_model=RegressionResult | ClassificationResult,
+    response_model=(
+        RegressionResult
+        | ClassificationResult
+        | ClusteringResult
+        | PCAResult
+    ),
     summary="Get a stored model result",
 )
 def get_model_result(
     result_id: str,
     _: Annotated[User, Depends(require_viewer)],
-) -> RegressionResult | ClassificationResult:
-    """Return a previously trained regression or classification result."""
+) -> (
+    RegressionResult
+    | ClassificationResult
+    | ClusteringResult
+    | PCAResult
+):
+    """Return a previously trained model or analysis result."""
     try:
         return regression_service.get_result(result_id)
     except RegressionError:
         pass
     try:
         return classification_service.get_result(result_id)
-    except ClassificationError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
+    except ClassificationError:
+        pass
+    try:
+        return clustering_service.get_result(result_id)
+    except ClusteringError:
+        pass
+    try:
+        return pca_service.get_result(result_id)
+    except PCAError:
+        pass
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Model result not found",
+    )

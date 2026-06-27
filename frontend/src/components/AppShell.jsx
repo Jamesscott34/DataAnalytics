@@ -54,6 +54,8 @@ export function AppShell() {
               <Link to={`/eda/${lastFile.fileId}`}>EDA</Link>
               <Link to={`/regression/${lastFile.fileId}`}>Regression</Link>
               <Link to={`/classification/${lastFile.fileId}`}>Classification</Link>
+              <Link to={`/clustering/${lastFile.fileId}`}>Clustering</Link>
+              <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Versions</Link>
             </div>
           </section>

@@ -8,8 +8,10 @@ import { DashboardPage } from './pages/DashboardPage.jsx';
 import { HealthStatusPage } from './pages/HealthStatusPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { ClassificationPage } from './pages/ClassificationPage.jsx';
+import { ClusteringPage } from './pages/ClusteringPage.jsx';
 import { EDAPage } from './pages/EDAPage.jsx';
 import { GroupsPage } from './pages/GroupsPage.jsx';
+import { PCAPage } from './pages/PCAPage.jsx';
 import { QuickScanPage } from './pages/QuickScanPage.jsx';
 import { ScanResultViewPage } from './pages/ScanResultViewPage.jsx';
 import { RegressionPage } from './pages/RegressionPage.jsx';
@@ -118,6 +120,38 @@ function App() {
               element={
                 <ProtectedRoute roles={['admin', 'analyst']}>
                   <ClassificationPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clustering"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <ClusteringPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/clustering/:fileId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <ClusteringPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pca"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <PCAPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pca/:fileId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <PCAPage />
                 </ProtectedRoute>
               }
             />

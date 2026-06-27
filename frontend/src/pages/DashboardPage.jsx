@@ -126,6 +126,20 @@ export function DashboardPage() {
             Open classification
           </Link>
         </article>
+        <article className="action-card">
+          <h2>Clustering</h2>
+          <p>K-means and hierarchical clustering with elbow diagnostics.</p>
+          <Link className="primary-link" to="/clustering">
+            Open clustering
+          </Link>
+        </article>
+        <article className="action-card">
+          <h2>PCA</h2>
+          <p>Principal component analysis with explained variance charts.</p>
+          <Link className="primary-link" to="/pca">
+            Open PCA
+          </Link>
+        </article>
         {lastFile && (
           <article className="action-card action-card--highlight">
             <h2>Continue with last file</h2>
@@ -138,6 +152,8 @@ export function DashboardPage() {
               <Link to={`/eda/${lastFile.fileId}`}>EDA</Link>
               <Link to={`/regression/${lastFile.fileId}`}>Regression</Link>
               <Link to={`/classification/${lastFile.fileId}`}>Classification</Link>
+              <Link to={`/clustering/${lastFile.fileId}`}>Clustering</Link>
+              <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Version history</Link>
             </div>
           </article>
@@ -209,6 +225,8 @@ export function DashboardPage() {
                   <Link to={`/eda/${file.id}`}>EDA</Link>
                   <Link to={`/regression/${file.id}`}>Regression</Link>
                   <Link to={`/classification/${file.id}`}>Classification</Link>
+                  <Link to={`/clustering/${file.id}`}>Clustering</Link>
+                  <Link to={`/pca/${file.id}`}>PCA</Link>
                   <Link to={`/versions/${file.id}`}>Versions</Link>
                 </div>
               </li>

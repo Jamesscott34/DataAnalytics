@@ -86,6 +86,7 @@ class ModelRegistryResponse(BaseModel):
 
     regression: list[ModelAlgorithmInfo]
     classification: list[ModelAlgorithmInfo] = Field(default_factory=list)
+    clustering: list[ModelAlgorithmInfo] = Field(default_factory=list)
     plugins: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -161,3 +162,83 @@ class ClassificationResult(BaseModel):
     confusion_matrix: ConfusionMatrix
     classification_report: list[ClassReportItem]
     predictions: list[ClassificationPrediction]
+
+
+ClusteringAlgorithm = Literal["kmeans", "hierarchical"]
+
+
+class ClusteringRequest(BaseModel):
+    """Cluster rows in an uploaded CSV file."""
+
+    algorithm: ClusteringAlgorithm
+    feature_columns: list[str] = Field(min_length=1)
+    n_clusters: int = Field(default=3, ge=2, le=20)
+    max_k: int = Field(default=8, ge=2, le=15)
+    random_state: int = 42
+
+
+class ElbowPoint(BaseModel):
+    """Inertia for a k-means cluster count."""
+
+    k: int
+    inertia: float
+
+
+class ClusterAssignment(BaseModel):
+    """Cluster label for a single row."""
+
+    row_index: int
+    cluster: int
+
+
+class ClusteringResult(BaseModel):
+    """Clustering output with elbow diagnostics."""
+
+    result_id: str
+    model_type: Literal["clustering"] = "clustering"
+    file_id: int
+    algorithm: ClusteringAlgorithm
+    feature_columns: list[str]
+    row_count: int
+    n_clusters: int
+    assignments: list[ClusterAssignment]
+    cluster_sizes: dict[int, int]
+    elbow: list[ElbowPoint]
+    silhouette: float | None = None
+
+
+class PCARequest(BaseModel):
+    """Run PCA on feature columns from an uploaded CSV file."""
+
+    feature_columns: list[str] = Field(min_length=1)
+    n_components: int = Field(default=2, ge=1, le=10)
+    random_state: int = 42
+
+
+class PCALoading(BaseModel):
+    """Feature weight for a principal component."""
+
+    feature: str
+    weight: float
+
+
+class PCAComponent(BaseModel):
+    """Single principal component summary."""
+
+    name: str
+    explained_variance_ratio: float
+    loadings: list[PCALoading]
+
+
+class PCAResult(BaseModel):
+    """PCA output with variance and row projections."""
+
+    result_id: str
+    model_type: Literal["pca"] = "pca"
+    file_id: int
+    feature_columns: list[str]
+    row_count: int
+    n_components: int
+    total_explained_variance: float
+    components: list[PCAComponent]
+    projections: list[list[float]]
