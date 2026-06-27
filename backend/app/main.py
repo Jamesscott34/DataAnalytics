@@ -22,6 +22,7 @@ from app.routers import (
     audit,
     auth,
     eda,
+    explainability,
     export,
     groups,
     health,
@@ -92,6 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(groups.router, prefix=API_V1_PREFIX)
     app.include_router(sql.router, prefix=API_V1_PREFIX)
     app.include_router(models_regression.router, prefix=API_V1_PREFIX)
+    app.include_router(explainability.router, prefix=API_V1_PREFIX)
     app.include_router(quick_scan.router, prefix=API_V1_PREFIX)
     app.include_router(export.router, prefix=API_V1_PREFIX)
 

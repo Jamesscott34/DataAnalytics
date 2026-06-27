@@ -1,4 +1,5 @@
-import { BarChart } from './charts/BarChart.jsx';
+import { ShapSummaryPanel } from './ShapSummaryPanel.jsx';
+import { FeatureImportanceChart } from './charts/FeatureImportanceChart.jsx';
 
 /**
  * RegressionResults
@@ -9,11 +10,6 @@ export function RegressionResults({ result }) {
   if (!result) {
     return null;
   }
-
-  const importanceValues = result.feature_importance.map((item) => ({
-    value: item.feature,
-    count: item.importance,
-  }));
 
   return (
     <section className="regression-results" aria-label="Regression results">
@@ -41,9 +37,8 @@ export function RegressionResults({ result }) {
         {result.feature_columns.join(', ')}.
       </p>
 
-      {importanceValues.length > 0 && (
-        <BarChart title="Feature importance" values={importanceValues} />
-      )}
+      <FeatureImportanceChart data={result.feature_importance} />
+      <ShapSummaryPanel explainability={result.explainability} />
 
       <div className="table-scroll">
         <table className="data-table">

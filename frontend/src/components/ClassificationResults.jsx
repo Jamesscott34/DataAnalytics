@@ -1,3 +1,5 @@
+import { ShapSummaryPanel } from './ShapSummaryPanel.jsx';
+
 /**
  * ClassificationResults
  *
@@ -11,6 +13,18 @@ export function ClassificationResults({ result }) {
   const { labels, matrix, included, message, class_count: classCount } =
     result.confusion_matrix;
   const showMatrix = included !== false && labels.length > 0;
+  const confidenceValues = result.predictions
+    .map((prediction) => prediction.confidence)
+    .filter((confidence) => confidence !== null && confidence !== undefined);
+  const confidenceSummary = confidenceValues.length
+    ? {
+        average: (
+          confidenceValues.reduce((sum, value) => sum + value, 0) / confidenceValues.length
+        ).toFixed(4),
+        minimum: Math.min(...confidenceValues).toFixed(4),
+        maximum: Math.max(...confidenceValues).toFixed(4),
+      }
+    : null;
 
   return (
     <section className="classification-results" aria-label="Classification results">
@@ -37,6 +51,8 @@ export function ClassificationResults({ result }) {
         {result.algorithm} model predicting <strong>{result.target_column}</strong> from{' '}
         {result.feature_columns.join(', ')}.
       </p>
+
+      <ShapSummaryPanel confidenceSummary={confidenceSummary} />
 
       <h3>Confusion matrix</h3>
       {showMatrix ? (
