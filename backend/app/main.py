@@ -30,6 +30,8 @@ from app.routers import (
     insights,
     jobs,
     models_regression,
+    monitoring,
+    plugins,
     quick_scan,
     scans,
     sql,
@@ -85,6 +87,7 @@ def create_app() -> FastAPI:
 
     register_exception_handlers(app)
     app.include_router(health.router, prefix=API_V1_PREFIX)
+    app.include_router(monitoring.router, prefix=API_V1_PREFIX)
     app.include_router(auth.router, prefix=API_V1_PREFIX)
     app.include_router(users.router, prefix=API_V1_PREFIX)
     app.include_router(uploads.router, prefix=API_V1_PREFIX)
@@ -98,6 +101,7 @@ def create_app() -> FastAPI:
     app.include_router(groups.router, prefix=API_V1_PREFIX)
     app.include_router(sql.router, prefix=API_V1_PREFIX)
     app.include_router(models_regression.router, prefix=API_V1_PREFIX)
+    app.include_router(plugins.router, prefix=API_V1_PREFIX)
     app.include_router(explainability.router, prefix=API_V1_PREFIX)
     app.include_router(quick_scan.router, prefix=API_V1_PREFIX)
     app.include_router(insights.router, prefix=API_V1_PREFIX)

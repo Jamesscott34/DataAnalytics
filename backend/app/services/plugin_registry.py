@@ -158,10 +158,20 @@ def get_timeseries_algorithm(algorithm_id: str) -> TimeseriesAlgorithmSpec:
 
 def model_registry_response() -> ModelRegistryResponse:
     """Build the model registry payload for clients."""
+    from app.services.analytics_plugins import list_plugin_specs
+
     return ModelRegistryResponse(
         regression=list_regression_algorithms(),
         classification=list_classification_algorithms(),
         clustering=list_clustering_algorithms(),
         timeseries=list_timeseries_algorithms(),
-        plugins=[],
+        plugins=[
+            {
+                "name": plugin.name,
+                "display_name": plugin.display_name,
+                "description": plugin.description,
+                "applicable": plugin.applicable,
+            }
+            for plugin in list_plugin_specs()
+        ],
     )
