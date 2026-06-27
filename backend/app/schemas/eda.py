@@ -10,6 +10,16 @@ class EDARequest(BaseModel):
     """Request body for running EDA on a file."""
 
     force_refresh: bool = False
+    force_background: bool = False
+
+
+class EDAQueuedResponse(BaseModel):
+    """Response when EDA is queued as a background job."""
+
+    async_job: bool = True
+    job_id: str
+    file_id: int
+    message: str
 
 
 class NumericStats(BaseModel):

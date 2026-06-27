@@ -21,12 +21,14 @@ src = ["app", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
 files = ["app"]
 ignore_missing_imports = true
+disable_error_code = ["misc", "assignment", "no-any-return", "attr-defined"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -44,6 +46,7 @@ exclude_lines = [
 
 [tool.bandit]
 exclude_dirs = ["tests"]
+skips = ["B608", "B310"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]

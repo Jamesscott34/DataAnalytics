@@ -51,6 +51,21 @@ class EDAService:
         """Clear the in-memory EDA cache (used in tests)."""
         self._cache_by_hash.clear()
 
+    def is_large_file(self, db: Session, *, file_id: int) -> bool:
+        """Return True when the file exceeds the configured large-file threshold."""
+        file = self._get_file(db, file_id)
+        return file.size_bytes >= get_settings().large_file_warning_bytes
+
+    def should_run_in_background(
+        self,
+        db: Session,
+        *,
+        file_id: int,
+        force_background: bool = False,
+    ) -> bool:
+        """Decide whether EDA should run asynchronously."""
+        return force_background or self.is_large_file(db, file_id=file_id)
+
     def run_for_file(
         self,
         db: Session,

@@ -1,8 +1,8 @@
 """Background job orchestration service."""
 
-from datetime import UTC, datetime
 import threading
 import uuid
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
@@ -86,13 +86,39 @@ class BackgroundJobService:
 
             if job.job_type == "quick_scan":
                 self._set_progress(db, job, 25)
-                file_id = int(job.payload.get("file_id"))
+                file_id = int(job.payload.get("file_id", 0))
                 report = quick_scan_service.run_quick_scan(db, file_id=file_id)
                 self._complete(
                     db,
                     job,
                     result_id=report.report_id,
                     result={"report_id": report.report_id, "file_id": file_id},
+                )
+            elif job.job_type == "eda":
+                from app.services.eda_service import eda_service
+
+                file_id = int(job.payload.get("file_id", 0))
+                force_refresh = bool(job.payload.get("force_refresh", False))
+                self._set_progress(db, job, 20)
+                if self._is_cancelled(db, job.id):
+                    return self.get_job(db, job_id=job.id)
+                self._set_progress(db, job, 50)
+                response = eda_service.run_for_file(
+                    db,
+                    file_id=file_id,
+                    force_refresh=force_refresh,
+                )
+                self._set_progress(db, job, 90)
+                self._complete(
+                    db,
+                    job,
+                    result_id=response.result_id,
+                    result={
+                        "file_id": file_id,
+                        "result_id": response.result_id,
+                        "row_count": response.summary.row_count,
+                        "sampled": response.sampled,
+                    },
                 )
             elif job.job_type == "fail":
                 raise BackgroundJobError(str(job.payload.get("message") or "Job failed"))

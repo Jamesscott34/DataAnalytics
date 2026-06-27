@@ -1,14 +1,18 @@
 """Application monitoring metrics and health checks."""
 
-from datetime import UTC, datetime
 import threading
 import time
+from datetime import UTC, datetime
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
-from app.schemas.monitoring import DatabaseStatus, MonitoringHealthResponse, RequestMetrics
+from app.schemas.monitoring import (
+    DatabaseStatus,
+    MonitoringHealthResponse,
+    RequestMetrics,
+)
 
 
 class MonitoringService:

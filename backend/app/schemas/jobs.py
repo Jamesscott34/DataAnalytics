@@ -6,7 +6,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 JobStatusValue = Literal["queued", "running", "complete", "failed", "cancelled"]
-JobType = Literal["demo", "quick_scan", "fail"]
+JobType = Literal["demo", "quick_scan", "fail", "eda"]
 
 
 class JobCreateRequest(BaseModel):

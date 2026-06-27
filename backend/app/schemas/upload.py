@@ -68,11 +68,12 @@ class DuplicateUploadResponse(BaseModel):
 
 
 class AssetFileInfo(BaseModel):
-    """Metadata for a CSV file available in temp_assets."""
+    """Metadata for a file available in temp_assets."""
 
     name: str
     size_bytes: int
     safe: bool = True
+    file_type: str = "csv"
 
 
 class AssetListResponse(BaseModel):

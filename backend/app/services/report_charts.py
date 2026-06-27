@@ -7,8 +7,8 @@ from typing import Any
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.shapes import Drawing
 from reportlab.lib import colors
-from reportlab.platypus import Flowable, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Flowable, Paragraph, Spacer
 
 
 class DrawingFlowable(Flowable):

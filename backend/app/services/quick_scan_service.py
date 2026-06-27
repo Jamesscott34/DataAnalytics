@@ -13,7 +13,10 @@ from app.schemas.quick_scan import (
     QuickScanStepResult,
     SQLImportSummary,
 )
-from app.services.classification_service import ClassificationError, classification_service
+from app.services.classification_service import (
+    ClassificationError,
+    classification_service,
+)
 from app.services.eda_service import EDAError, eda_service
 from app.services.regression_service import RegressionError, regression_service
 from app.services.security_scan_service import security_scan_service

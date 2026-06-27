@@ -4,9 +4,7 @@ Validates uploaded CSV files, computes SHA-256 hashes, stores accepted files,
 and persists metadata. Does not perform security scanning, EDA, or ML analysis.
 """
 
-import csv
 from dataclasses import dataclass
-from io import StringIO
 from pathlib import Path
 
 from sqlalchemy.orm import Session

@@ -29,11 +29,11 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.models.uploaded_file import UploadedFile
 from app.schemas.models import (
-    ClassReportItem,
     ClassificationMetrics,
     ClassificationPrediction,
     ClassificationRequest,
     ClassificationResult,
+    ClassReportItem,
     ConfusionMatrix,
 )
 from app.services.plugin_registry import (

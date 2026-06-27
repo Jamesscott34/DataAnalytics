@@ -29,13 +29,17 @@ export async function runEda(fileId, options = {}) {
     headers: authHeaders(),
     body: JSON.stringify({
       force_refresh: options.forceRefresh ?? false,
+      force_background: options.forceBackground ?? false,
     }),
   });
+  const body = await response.json().catch(() => ({}));
+  if (response.status === 202) {
+    return body;
+  }
   if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
     throw new Error(body.message ?? body.detail ?? 'EDA analysis failed');
   }
-  return response.json();
+  return body;
 }
 
 /**

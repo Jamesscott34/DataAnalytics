@@ -31,7 +31,7 @@ def test_upload_accepts_ragged_csv(client: TestClient) -> None:
     response = client.post(
         "/api/v1/uploads",
         headers={"Authorization": f"Bearer {token}"},
-        files={"file": (filename := "market_basket.csv", content, "text/csv")},
+        files={"file": ("market_basket.csv", content, "text/csv")},
     )
     assert response.status_code == 201
     assert response.json()["column_count"] == 3

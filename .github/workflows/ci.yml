@@ -25,10 +25,16 @@ jobs:
           .venv/bin/pip install "httpx2>=2.0.0,<3.0.0"
       - name: Verify TestClient dependency
         run: .venv/bin/python -c "from fastapi.testclient import TestClient"
+      - name: Ruff
+        run: .venv/bin/ruff check app/ tests/
       - name: Black
         run: .venv/bin/black --check app/ tests/
       - name: isort
         run: .venv/bin/isort --check-only app/ tests/
+      - name: Mypy
+        run: .venv/bin/mypy app
+      - name: Bandit
+        run: .venv/bin/bandit -r app -c pyproject.toml
       - name: Pytest with service coverage
         run: .venv/bin/pytest -q --cov=app/services --cov-report=term --cov-fail-under=80
 
@@ -47,10 +53,43 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Prettier (changed chart components)
-        run: npx prettier --check "src/components/charts/**/*.{js,jsx}" "src/components/EDADashboard.jsx" "src/pages/BusinessDashboardPage.jsx"
+        run: npx prettier --check "src/components/charts/**/*.{js,jsx}" "src/components/EDADashboard.jsx" "src/pages/BusinessDashboardPage.jsx" "src/hooks/useEDA.js"
       - name: Lint
         run: npm run lint
       - name: Test
         run: npm run test -- --run
       - name: Build
         run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m venv .venv-e2e
+          .venv-e2e/bin/pip install --upgrade pip
+          .venv-e2e/bin/pip install -r requirements-dev.txt
+          .venv-e2e/bin/pip install "httpx2>=2.0.0,<3.0.0"
+          .venv-e2e/bin/alembic upgrade head
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Install Playwright
+        working-directory: e2e
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Run Playwright E2E
+        working-directory: e2e
+        env:
+          CI: "true"
+        run: npm test

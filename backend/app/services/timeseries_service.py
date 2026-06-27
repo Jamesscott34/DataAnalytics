@@ -28,7 +28,12 @@ from app.services.plugin_registry import (
 )
 from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
-from app.utils.type_utils import coerce_float, is_missing, normalize_cell, parse_datetime_value
+from app.utils.type_utils import (
+    coerce_float,
+    is_missing,
+    normalize_cell,
+    parse_datetime_value,
+)
 
 
 class TimeseriesError(ValueError):
@@ -323,7 +328,7 @@ class TimeseriesService:
         value_index = headers.index(value_column)
         points: list[_SeriesPoint] = []
 
-        for row_number, row in enumerate(rows[1:], start=1):
+        for _row_number, row in enumerate(rows[1:], start=1):
             if len(row) < len(headers):
                 row = row + [""] * (len(headers) - len(row))
             date_text = normalize_cell(row[date_index])

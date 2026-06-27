@@ -82,6 +82,54 @@ async def upload_csv(
         ) from exc
 
 
+@router.post(
+    "/xlsx",
+    response_model=UploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload an XLSX file and convert it to CSV",
+)
+async def upload_xlsx(
+    request: Request,
+    file: Annotated[UploadFile, File(description="XLSX workbook to convert and upload")],
+    current_user: Annotated[User, Depends(require_analyst)],
+    db: Annotated[Session, Depends(get_db)],
+    client_sha256: Annotated[str | None, Form()] = None,
+    duplicate_action: Annotated[str | None, Form()] = None,
+) -> UploadResponse:
+    """Convert an Excel workbook to CSV and store it through the upload pipeline."""
+    from app.services.xlsx_conversion_service import (
+        XLSXConversionError,
+        xlsx_conversion_service,
+    )
+
+    content = await file.read()
+    try:
+        csv_name, csv_bytes = xlsx_conversion_service.convert_bytes(
+            content,
+            filename=file.filename or "workbook.xlsx",
+        )
+        return csv_service.upload_csv(
+            db,
+            filename=csv_name,
+            content=csv_bytes,
+            owner_id=current_user.id,
+            mime_type="text/csv",
+            client_sha256=client_sha256,
+            duplicate_action=duplicate_action,
+            ip_address=get_client_ip(request),
+        )
+    except XLSXConversionError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except CSVUploadError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
 @router.get(
     "/{file_id}/versions",
     response_model=FileVersionListResponse,

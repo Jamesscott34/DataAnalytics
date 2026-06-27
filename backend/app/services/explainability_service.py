@@ -1,11 +1,17 @@
 """Explainability helpers for stored model results."""
 
+from sqlalchemy.orm import Session
+
 from app.schemas.explainability import (
     ConfidenceSummary,
     ExplainabilityResponse,
     ShapResponse,
 )
-from app.services.classification_service import ClassificationError, classification_service
+from app.schemas.models import ClassificationResult, RegressionResult
+from app.services.classification_service import (
+    ClassificationError,
+    classification_service,
+)
 from app.services.regression_service import RegressionError, regression_service
 
 
@@ -14,16 +20,23 @@ class ExplainabilityError(ValueError):
 
 
 class ExplainabilityService:
-    """Build lightweight explainability summaries from in-memory model results."""
+    """Build lightweight explainability summaries from stored model results."""
 
-    def explain_result(self, result_id: str) -> ExplainabilityResponse:
+    def explain_result(
+        self,
+        result_id: str,
+        db: Session | None = None,
+    ) -> ExplainabilityResponse:
         """Return explainability data for a regression or classification result."""
-        try:
-            result = regression_service.get_result(result_id)
+        regression_result = result_persistence_service_load_regression(
+            result_id,
+            db,
+        )
+        if regression_result is not None:
             return ExplainabilityResponse(
                 result_id=result_id,
-                model_type=result.model_type,
-                feature_importance=result.feature_importance,
+                model_type=regression_result.model_type,
+                feature_importance=regression_result.feature_importance,
                 shap_values=None,
                 confidence_scores=None,
                 summary_text=(
@@ -31,17 +44,17 @@ class ExplainabilityService:
                     "importance. SHAP is not computed in this lightweight runtime."
                 ),
             )
-        except RegressionError:
-            pass
 
-        try:
-            result = classification_service.get_result(result_id)
+        classification_result = result_persistence_service_load_classification(
+            result_id,
+            db,
+        )
+        if classification_result is not None:
             confidence_values = [
                 prediction.confidence
-                for prediction in result.predictions
+                for prediction in classification_result.predictions
                 if prediction.confidence is not None
             ]
-            confidence = None
             if confidence_values:
                 confidence = ConfidenceSummary(
                     available=True,
@@ -53,19 +66,19 @@ class ExplainabilityService:
                 confidence = ConfidenceSummary(available=False)
             return ExplainabilityResponse(
                 result_id=result_id,
-                model_type=result.model_type,
+                model_type=classification_result.model_type,
                 confidence_scores=confidence,
                 summary_text=(
                     "Classification explainability includes prediction confidence where "
                     "the selected estimator exposes probabilities."
                 ),
             )
-        except ClassificationError as exc:
-            raise ExplainabilityError("Model result not found") from exc
 
-    def shap_values(self, result_id: str) -> ShapResponse:
+        raise ExplainabilityError("Model result not found")
+
+    def shap_values(self, result_id: str, db: Session | None = None) -> ShapResponse:
         """Return a SHAP fallback for supported result IDs."""
-        self.explain_result(result_id)
+        self.explain_result(result_id, db)
         return ShapResponse(
             supported=False,
             shap_summary=(
@@ -74,6 +87,28 @@ class ExplainabilityService:
             ),
             shap_values_sample=[],
         )
+
+
+def result_persistence_service_load_regression(
+    result_id: str,
+    db: Session | None,
+) -> RegressionResult | None:
+    """Load a regression result without raising when missing."""
+    try:
+        return regression_service.get_result(result_id, db)
+    except RegressionError:
+        return None
+
+
+def result_persistence_service_load_classification(
+    result_id: str,
+    db: Session | None,
+) -> ClassificationResult | None:
+    """Load a classification result without raising when missing."""
+    try:
+        return classification_service.get_result(result_id, db)
+    except ClassificationError:
+        return None
 
 
 explainability_service = ExplainabilityService()

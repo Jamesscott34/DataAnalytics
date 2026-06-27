@@ -1,7 +1,7 @@
 """Plain-English analysis insight generation."""
 
-from urllib import request as urllib_request
 import json
+from urllib import request as urllib_request
 
 from sqlalchemy.orm import Session
 
@@ -12,8 +12,14 @@ from app.services.business_analytics_service import (
     BusinessAnalyticsError,
     business_analytics_service,
 )
-from app.services.classification_service import ClassificationError, classification_service
-from app.services.recommendation_service import RecommendationError, recommendation_service
+from app.services.classification_service import (
+    ClassificationError,
+    classification_service,
+)
+from app.services.recommendation_service import (
+    RecommendationError,
+    recommendation_service,
+)
 from app.services.regression_service import RegressionError, regression_service
 
 
@@ -73,50 +79,54 @@ class InsightService:
         analysis_type: str,
     ) -> dict[str, object]:
         try:
-            result = regression_service.get_result(result_id, db)
+            regression_result = regression_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
-                "model_type": result.model_type,
-                "algorithm": result.algorithm,
-                "target": result.target_column,
-                "metrics": result.metrics.model_dump(),
-                "top_features": [item.model_dump() for item in result.feature_importance[:5]],
+                "model_type": regression_result.model_type,
+                "algorithm": regression_result.algorithm,
+                "target": regression_result.target_column,
+                "metrics": regression_result.metrics.model_dump(),
+                "top_features": [
+                    item.model_dump() for item in regression_result.feature_importance[:5]
+                ],
             }
         except RegressionError:
             pass
 
         try:
-            result = classification_service.get_result(result_id, db)
+            classification_result = classification_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
-                "model_type": result.model_type,
-                "algorithm": result.algorithm,
-                "target": result.target_column,
-                "metrics": result.metrics.model_dump(),
+                "model_type": classification_result.model_type,
+                "algorithm": classification_result.algorithm,
+                "target": classification_result.target_column,
+                "metrics": classification_result.metrics.model_dump(),
             }
         except ClassificationError:
             pass
 
         try:
-            result = recommendation_service.get_result(result_id, db)
+            similarity_result = recommendation_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
-                "model_type": result.model_type,
-                "mode": result.mode,
-                "suitable": result.suitable,
-                "suitability_note": result.suitability_note,
-                "top_pairs": [item.model_dump() for item in result.top_pairs[:3]],
+                "model_type": similarity_result.model_type,
+                "mode": similarity_result.mode,
+                "suitable": similarity_result.suitable,
+                "suitability_note": similarity_result.suitability_note,
+                "top_pairs": [
+                    item.model_dump() for item in similarity_result.top_pairs[:3]
+                ],
             }
         except RecommendationError:
             pass
 
         try:
-            result = business_analytics_service.get_result(result_id, db)
+            business_result = business_analytics_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
                 "model_type": "business",
-                "kpis": [item.model_dump() for item in result.kpis],
-                "suitability_note": result.suitability_note,
+                "kpis": [item.model_dump() for item in business_result.kpis],
+                "suitability_note": business_result.suitability_note,
             }
         except BusinessAnalyticsError:
             pass

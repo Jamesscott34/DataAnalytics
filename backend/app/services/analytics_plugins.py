@@ -1,11 +1,11 @@
 """Built-in analytics plugins: anomaly, churn, fraud, demand."""
 
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from io import StringIO
 from pathlib import Path
 from typing import Any
-import uuid
 
 import numpy as np
 import pandas as pd

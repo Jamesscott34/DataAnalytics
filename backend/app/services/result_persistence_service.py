@@ -1,6 +1,6 @@
 """Persist and restore analysis results in SQL."""
 
-from typing import Any, TypeVar
+from typing import Any, Protocol, TypeVar, cast
 
 from pydantic import BaseModel, ValidationError
 from sqlalchemy.orm import Session
@@ -8,6 +8,13 @@ from sqlalchemy.orm import Session
 from app.models.model_result import ModelResult
 
 T = TypeVar("T", bound=BaseModel)
+
+
+class PersistableResult(Protocol):
+    result_id: str
+    file_id: int
+
+    def model_dump(self, *, mode: str = "json") -> dict[str, Any]: ...
 
 
 class ResultPersistenceError(ValueError):
@@ -70,8 +77,9 @@ class ResultPersistenceService:
         job_id: str | None = None,
     ) -> T:
         """Cache in memory and persist a Pydantic result model."""
-        result_id = str(getattr(result, "result_id"))
-        file_id = int(getattr(result, "file_id"))
+        persistable = cast(PersistableResult, result)
+        result_id = str(persistable.result_id)
+        file_id = int(persistable.file_id)
         cache[result_id] = result
         metrics: dict[str, Any] = {}
         explainability: dict[str, Any] | None = None

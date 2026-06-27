@@ -4,9 +4,9 @@ Configures the ASGI app, registers API routers under ``/api/v1``, and applies
 middleware. Does not contain business logic or route handlers beyond wiring.
 """
 
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-import threading
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

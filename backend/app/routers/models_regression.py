@@ -30,7 +30,10 @@ from app.services.classification_service import (
 from app.services.clustering_service import ClusteringError, clustering_service
 from app.services.pca_service import PCAError, pca_service
 from app.services.plugin_registry import model_registry_response
-from app.services.recommendation_service import RecommendationError, recommendation_service
+from app.services.recommendation_service import (
+    RecommendationError,
+    recommendation_service,
+)
 from app.services.regression_service import RegressionError, regression_service
 from app.services.timeseries_service import TimeseriesError, timeseries_service
 

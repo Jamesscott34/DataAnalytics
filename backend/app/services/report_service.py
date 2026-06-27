@@ -1,8 +1,8 @@
 """Report generation service for Markdown and PDF exports."""
 
-from io import BytesIO, StringIO
 import csv
 import json
+from io import BytesIO, StringIO
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -10,7 +10,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.schemas.quick_scan import QuickScanReport
-from app.services.report_charts import eda_charts_to_markdown, eda_charts_to_pdf_flowables
+from app.services.report_charts import (
+    eda_charts_to_markdown,
+    eda_charts_to_pdf_flowables,
+)
 
 
 class ReportService:
@@ -216,10 +219,10 @@ class ReportService:
                         "| --- | --- | --- | --- | --- |",
                     ],
                 )
-                for row in report.classification.classification_report:
+                for class_row in report.classification.classification_report:
                     lines.append(
-                        f"| {row.label} | {row.precision} | {row.recall} | "
-                        f"{row.f1} | {row.support} |",
+                        f"| {class_row.label} | {class_row.precision} | {class_row.recall} | "
+                        f"{class_row.f1} | {class_row.support} |",
                     )
 
         if report.notes:

@@ -273,7 +273,6 @@ class RegressionService:
                 categorical_features.append(list(column_values))
                 categorical_names.append(column_name)
 
-        transformers: list[tuple[str, Any, list[int]]] = []
         feature_blocks: list[np.ndarray] = []
         feature_names: list[str] = []
 

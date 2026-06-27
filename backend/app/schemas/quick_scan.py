@@ -1,7 +1,7 @@
 """Quick scan and analysis report schemas."""
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 

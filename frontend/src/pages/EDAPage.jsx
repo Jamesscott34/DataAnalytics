@@ -18,7 +18,9 @@ export function EDAPage() {
   const fileId = routeFileId ? Number(routeFileId) : null;
   const hasFileId = Number.isFinite(fileId);
   const lastFile = getLastFile();
-  const { eda, suggestions, loading, error, analyze } = useEDA(hasFileId ? fileId : null);
+  const { eda, suggestions, loading, error, jobProgress, analyze } = useEDA(
+    hasFileId ? fileId : null,
+  );
 
   useEffect(() => {
     if (hasFileId && lastFile?.filename && lastFile.fileId === fileId) {
@@ -90,6 +92,11 @@ export function EDAPage() {
             )}
           </div>
         </div>
+        {jobProgress && (
+          <p className="upload-help" role="status">
+            Background EDA: {jobProgress.status} ({jobProgress.progress}%)
+          </p>
+        )}
         {error && (
           <p className="form-error" role="alert">
             {error}

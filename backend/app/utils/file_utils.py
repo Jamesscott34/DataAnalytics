@@ -49,6 +49,36 @@ def sanitize_filename(filename: str) -> str:
     return sanitized
 
 
+def sanitize_workbook_filename(filename: str) -> str:
+    """Return a storage-safe Excel workbook filename."""
+    validate_workbook_filename(filename)
+    basename = Path(filename).name
+    sanitized = _SAFE_FILENAME_RE.sub("_", basename).strip("._")
+    if not sanitized:
+        raise FileValidationError("Filename is empty after sanitisation")
+    return sanitized
+
+
+def validate_workbook_filename(filename: str) -> None:
+    """Validate an uploaded Excel filename before conversion."""
+    if not filename:
+        raise FileValidationError("Filename is required")
+    if "\x00" in filename:
+        raise FileValidationError("Filename contains a null byte")
+    if filename != Path(filename).name:
+        raise FileValidationError("Filename must not contain path separators")
+    if Path(filename).is_absolute():
+        raise FileValidationError("Absolute paths are not allowed")
+    if ".." in Path(filename).parts or ".." in filename:
+        raise FileValidationError("Path traversal is not allowed")
+
+    suffixes = [suffix.lower() for suffix in Path(filename).suffixes]
+    if not suffixes or suffixes[-1] not in {".xlsx", ".xls"}:
+        raise FileValidationError("Only .xlsx and .xls files are allowed")
+    if any(suffix in BLOCKED_EXTENSIONS for suffix in suffixes):
+        raise FileValidationError("Executable or script extensions are blocked")
+
+
 def validate_filename(filename: str) -> None:
     """Validate an uploaded filename before storage.
 

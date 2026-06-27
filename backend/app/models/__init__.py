@@ -3,8 +3,8 @@
 Exports all mapped classes for Alembic autogenerate and application imports.
 """
 
-from app.models.audit_log import AuditLog
 from app.models.analysis_job import AnalysisJob
+from app.models.audit_log import AuditLog
 from app.models.csv_data import CsvData
 from app.models.dataset_group import DatasetGroup, DatasetGroupMember
 from app.models.file_version import FileVersion

@@ -1,7 +1,7 @@
 """Tests for EDA chart rendering in exported reports."""
 
-from app.services.report_charts import eda_charts_to_markdown, eda_charts_to_pdf_flowables
-from app.services.report_service import report_service
+from datetime import UTC, datetime
+
 from app.schemas.eda import (
     ColumnSummary,
     EDAResponse,
@@ -9,7 +9,11 @@ from app.schemas.eda import (
     NumericStats,
 )
 from app.schemas.quick_scan import QuickScanReport
-from datetime import datetime, timezone
+from app.services.report_charts import (
+    eda_charts_to_markdown,
+    eda_charts_to_pdf_flowables,
+)
+from app.services.report_service import report_service
 
 
 def test_eda_charts_to_markdown_includes_histogram_and_bar() -> None:
@@ -80,7 +84,7 @@ def test_report_markdown_and_pdf_include_eda_charts() -> None:
                 "bins": [{"start": 8, "end": 12, "count": 8}],
             },
         },
-        analyzed_at=datetime.now(timezone.utc),
+        analyzed_at=datetime.now(UTC),
     )
     report = QuickScanReport(
         report_id="test-report",
@@ -89,7 +93,7 @@ def test_report_markdown_and_pdf_include_eda_charts() -> None:
         row_count=8,
         column_count=2,
         file_hash="a" * 64,
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         steps=[],
         eda=eda,
     )

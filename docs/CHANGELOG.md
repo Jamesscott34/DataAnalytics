@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `model_results` SQL table (migration `010_model_results`) with persistence for EDA, ML, and business analytics outputs.
+- Background EDA jobs for files above 50MB with job progress polling (`job_type: eda`).
+- XLSX upload and temp-asset conversion endpoints (`POST /uploads/xlsx`, `POST /assets/convert-xlsx`).
+- Playwright E2E suite (`e2e/`) covering upload → EDA → quick-scan → JSON export.
+- CI enforcement for ruff, mypy, bandit, and Playwright E2E.
+
+### Added (prior audit remediation)
 - EDA dataset charts: scatter plots, line charts, and correlation heatmaps (backend + React components).
 - Expanded pest-control business KPIs: yearly revenue, January sales, technician/pest/location breakdowns, repeat customers, MoM growth, next-month forecast.
 - Ragged CSV / market-basket parsing with column padding for variable-width transaction rows.

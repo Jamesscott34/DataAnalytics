@@ -59,3 +59,36 @@ def select_asset(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
         ) from exc
+
+
+class AssetConvertXlsxRequest(BaseModel):
+    """Request body for converting a temp XLSX asset to CSV."""
+
+    filename: str = Field(min_length=1, max_length=512)
+    duplicate_action: str | None = None
+
+
+@router.post(
+    "/convert-xlsx",
+    response_model=UploadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Convert a temp XLSX asset to CSV and import it",
+)
+def convert_xlsx_asset(
+    payload: AssetConvertXlsxRequest,
+    current_user: Annotated[User, Depends(require_analyst)],
+    db: Annotated[Session, Depends(get_db)],
+) -> UploadResponse:
+    """Convert an XLSX file from temp_assets into a stored CSV upload."""
+    try:
+        return assets_service.convert_xlsx_asset(
+            db,
+            filename=payload.filename,
+            owner_id=current_user.id,
+            duplicate_action=payload.duplicate_action,
+        )
+    except CSVUploadError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
