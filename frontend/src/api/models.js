@@ -132,3 +132,44 @@ export async function runPca(fileId, payload) {
   }
   return response.json();
 }
+
+/**
+ * @param {number} fileId
+ * @param {{
+ *   algorithm: string,
+ *   dateColumn: string,
+ *   valueColumn: string,
+ *   forecastPeriods?: number,
+ *   trainRatio?: number,
+ *   window?: number,
+ *   arLags?: number,
+ *   arimaP?: number,
+ *   arimaD?: number,
+ *   arimaQ?: number,
+ *   seasonalPeriod?: number | null,
+ * }} payload
+ */
+export async function runTimeseries(fileId, payload) {
+  const response = await fetch(`${API_BASE_URL}/models/${fileId}/timeseries`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      algorithm: payload.algorithm,
+      date_column: payload.dateColumn,
+      value_column: payload.valueColumn,
+      forecast_periods: payload.forecastPeriods ?? 5,
+      train_ratio: payload.trainRatio ?? 0.75,
+      window: payload.window ?? 3,
+      ar_lags: payload.arLags ?? 3,
+      arima_p: payload.arimaP ?? 1,
+      arima_d: payload.arimaD ?? 1,
+      arima_q: payload.arimaQ ?? 1,
+      seasonal_period: payload.seasonalPeriod ?? null,
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message ?? body.detail ?? 'Time series forecast failed');
+  }
+  return response.json();
+}

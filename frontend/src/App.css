@@ -942,6 +942,74 @@ button {
   margin-top: 0.35rem;
 }
 
+.forecast-chart-svg {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+}
+
+.forecast-axis {
+  stroke: #cbd5e1;
+  stroke-width: 1;
+}
+
+.forecast-divider {
+  stroke: #94a3b8;
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
+}
+
+.forecast-line {
+  fill: none;
+  stroke-width: 2;
+}
+
+.forecast-line--actual {
+  stroke: #2563eb;
+}
+
+.forecast-line--forecast {
+  stroke: #f59e0b;
+  stroke-dasharray: 6 4;
+}
+
+.forecast-label {
+  fill: #64748b;
+  font-size: 11px;
+}
+
+.forecast-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.forecast-legend-item {
+  font-size: 0.85rem;
+}
+
+.forecast-legend-item--actual::before {
+  background: #2563eb;
+  border-radius: 999px;
+  content: '';
+  display: inline-block;
+  height: 0.35rem;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  width: 1rem;
+}
+
+.forecast-legend-item--forecast::before {
+  background: #f59e0b;
+  border-radius: 999px;
+  content: '';
+  display: inline-block;
+  height: 0.35rem;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  width: 1rem;
+}
+
 .dashboard-eda-file {
   color: #475569;
   margin: 0 0 0.75rem;

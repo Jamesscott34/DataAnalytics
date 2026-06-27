@@ -87,6 +87,7 @@ class ModelRegistryResponse(BaseModel):
     regression: list[ModelAlgorithmInfo]
     classification: list[ModelAlgorithmInfo] = Field(default_factory=list)
     clustering: list[ModelAlgorithmInfo] = Field(default_factory=list)
+    timeseries: list[ModelAlgorithmInfo] = Field(default_factory=list)
     plugins: list[dict[str, Any]] = Field(default_factory=list)
 
 
@@ -242,3 +243,55 @@ class PCAResult(BaseModel):
     total_explained_variance: float
     components: list[PCAComponent]
     projections: list[list[float]]
+
+
+TimeseriesAlgorithm = Literal["moving_average", "autoregressive", "arima", "sarimax"]
+
+
+class TimeseriesRequest(BaseModel):
+    """Forecast a numeric series using date and value columns."""
+
+    algorithm: TimeseriesAlgorithm
+    date_column: str
+    value_column: str
+    forecast_periods: int = Field(default=5, ge=1, le=30)
+    train_ratio: float = Field(default=0.75, gt=0.5, lt=0.95)
+    window: int = Field(default=3, ge=2, le=30)
+    ar_lags: int = Field(default=3, ge=1, le=20)
+    arima_p: int = Field(default=1, ge=0, le=5)
+    arima_d: int = Field(default=1, ge=0, le=2)
+    arima_q: int = Field(default=1, ge=0, le=5)
+    seasonal_period: int | None = Field(default=None, ge=2, le=365)
+
+
+class TimeseriesMetrics(BaseModel):
+    """Hold-out forecast accuracy metrics."""
+
+    mae: float
+    rmse: float
+    mape: float | None = None
+
+
+class TimeseriesPoint(BaseModel):
+    """Actual and/or forecast value for one time step."""
+
+    label: str
+    actual: float | None = None
+    forecast: float | None = None
+
+
+class TimeseriesResult(BaseModel):
+    """Time series forecast output."""
+
+    result_id: str
+    model_type: Literal["timeseries"] = "timeseries"
+    file_id: int
+    algorithm: TimeseriesAlgorithm
+    date_column: str
+    value_column: str
+    row_count: int
+    train_rows: int
+    test_rows: int
+    metrics: TimeseriesMetrics
+    history: list[TimeseriesPoint]
+    forecast: list[TimeseriesPoint]

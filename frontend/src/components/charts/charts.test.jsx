@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { BarChart } from './BarChart.jsx';
+import { ForecastChart } from './ForecastChart.jsx';
 import { HistogramChart } from './HistogramChart.jsx';
 import { MissingValuesChart } from './MissingValuesChart.jsx';
 import { EDADashboard } from '../EDADashboard.jsx';
@@ -35,6 +36,27 @@ describe('HistogramChart', () => {
     );
     expect(screen.getByLabelText('Histogram for amount')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
+  });
+});
+
+describe('ForecastChart', () => {
+  it('renders actual and forecast lines', () => {
+    render(
+      <ForecastChart
+        title="Sales forecast"
+        history={[
+          { label: '2024-01', actual: 100, forecast: 98 },
+          { label: '2024-02', actual: 110, forecast: 108 },
+        ]}
+        forecast={[
+          { label: '2024-03', actual: null, forecast: 115 },
+          { label: '2024-04', actual: null, forecast: 120 },
+        ]}
+      />,
+    );
+    expect(screen.getByLabelText('Line chart for Sales forecast')).toBeInTheDocument();
+    expect(screen.getByText('Actual')).toBeInTheDocument();
+    expect(screen.getByText('Forecast')).toBeInTheDocument();
   });
 });
 

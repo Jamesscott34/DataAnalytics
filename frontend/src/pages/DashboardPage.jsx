@@ -64,7 +64,7 @@ export function DashboardPage() {
         <article className="action-card action-card--highlight">
           <h2>Full analysis scan</h2>
           <p>
-            Run EDA, SQL, regression, and classification in one go — then export a
+            Run EDA, SQL, regression, and classification in one go, then export a
             combined Markdown or PDF report.
           </p>
           <Link className="primary-link" to="/scan">
@@ -140,6 +140,13 @@ export function DashboardPage() {
             Open PCA
           </Link>
         </article>
+        <article className="action-card">
+          <h2>Time series</h2>
+          <p>Moving average, AR, and ARIMA forecasting with hold-out metrics.</p>
+          <Link className="primary-link" to="/timeseries">
+            Open time series
+          </Link>
+        </article>
         {lastFile && (
           <article className="action-card action-card--highlight">
             <h2>Continue with last file</h2>
@@ -154,6 +161,7 @@ export function DashboardPage() {
               <Link to={`/classification/${lastFile.fileId}`}>Classification</Link>
               <Link to={`/clustering/${lastFile.fileId}`}>Clustering</Link>
               <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
+              <Link to={`/timeseries/${lastFile.fileId}`}>Time series</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Version history</Link>
             </div>
           </article>
@@ -227,6 +235,7 @@ export function DashboardPage() {
                   <Link to={`/classification/${file.id}`}>Classification</Link>
                   <Link to={`/clustering/${file.id}`}>Clustering</Link>
                   <Link to={`/pca/${file.id}`}>PCA</Link>
+                  <Link to={`/timeseries/${file.id}`}>Time series</Link>
                   <Link to={`/versions/${file.id}`}>Versions</Link>
                 </div>
               </li>

@@ -18,6 +18,8 @@ from app.schemas.models import (
     PCAResult,
     RegressionRequest,
     RegressionResult,
+    TimeseriesRequest,
+    TimeseriesResult,
 )
 from app.services.classification_service import (
     ClassificationError,
@@ -27,6 +29,7 @@ from app.services.clustering_service import ClusteringError, clustering_service
 from app.services.pca_service import PCAError, pca_service
 from app.services.plugin_registry import model_registry_response
 from app.services.regression_service import RegressionError, regression_service
+from app.services.timeseries_service import TimeseriesError, timeseries_service
 
 router = APIRouter(prefix="/models", tags=["models"])
 
@@ -146,6 +149,32 @@ def run_pca(
         ) from exc
 
 
+@router.post(
+    "/{file_id}/timeseries",
+    response_model=TimeseriesResult,
+    summary="Forecast a time series from an uploaded CSV file",
+)
+def run_timeseries_forecast(
+    file_id: int,
+    request: TimeseriesRequest,
+    db: Annotated[Session, Depends(get_db)],
+    _: Annotated[User, Depends(require_analyst)],
+) -> TimeseriesResult:
+    """Forecast using moving average, AR, ARIMA, or SARIMAX."""
+    try:
+        return timeseries_service.run_forecast(db, file_id=file_id, request=request)
+    except TimeseriesError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+    except KeyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
 @router.get(
     "/results/{result_id}",
     response_model=(
@@ -153,6 +182,7 @@ def run_pca(
         | ClassificationResult
         | ClusteringResult
         | PCAResult
+        | TimeseriesResult
     ),
     summary="Get a stored model result",
 )
@@ -164,6 +194,7 @@ def get_model_result(
     | ClassificationResult
     | ClusteringResult
     | PCAResult
+    | TimeseriesResult
 ):
     """Return a previously trained model or analysis result."""
     try:
@@ -182,6 +213,13 @@ def get_model_result(
         return pca_service.get_result(result_id)
     except PCAError:
         pass
+    try:
+        return timeseries_service.get_result(result_id)
+    except TimeseriesError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Model result not found",

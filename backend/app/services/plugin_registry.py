@@ -37,9 +37,19 @@ class ClusteringAlgorithmSpec:
     builder: Callable[..., Any]
 
 
+@dataclass(frozen=True)
+class TimeseriesAlgorithmSpec:
+    """Metadata for a time series algorithm."""
+
+    id: str
+    label: str
+    description: str
+
+
 REGRESSION_ALGORITHMS: dict[str, RegressionAlgorithmSpec] = {}
 CLASSIFICATION_ALGORITHMS: dict[str, ClassificationAlgorithmSpec] = {}
 CLUSTERING_ALGORITHMS: dict[str, ClusteringAlgorithmSpec] = {}
+TIMESERIES_ALGORITHMS: dict[str, TimeseriesAlgorithmSpec] = {}
 
 
 def register_regression_algorithm(spec: RegressionAlgorithmSpec) -> None:
@@ -120,11 +130,38 @@ def get_clustering_algorithm(algorithm_id: str) -> ClusteringAlgorithmSpec:
     return spec
 
 
+def register_timeseries_algorithm(spec: TimeseriesAlgorithmSpec) -> None:
+    """Register a time series algorithm for API discovery."""
+    TIMESERIES_ALGORITHMS[spec.id] = spec
+
+
+def list_timeseries_algorithms() -> list[ModelAlgorithmInfo]:
+    """Return time series algorithms exposed by the API."""
+    return [
+        ModelAlgorithmInfo(
+            id=spec.id,
+            label=spec.label,
+            model_type="timeseries",
+            description=spec.description,
+        )
+        for spec in TIMESERIES_ALGORITHMS.values()
+    ]
+
+
+def get_timeseries_algorithm(algorithm_id: str) -> TimeseriesAlgorithmSpec:
+    """Look up a time series algorithm or raise when unknown."""
+    spec = TIMESERIES_ALGORITHMS.get(algorithm_id)
+    if spec is None:
+        raise KeyError(f"Unknown time series algorithm: {algorithm_id}")
+    return spec
+
+
 def model_registry_response() -> ModelRegistryResponse:
     """Build the model registry payload for clients."""
     return ModelRegistryResponse(
         regression=list_regression_algorithms(),
         classification=list_classification_algorithms(),
         clustering=list_clustering_algorithms(),
+        timeseries=list_timeseries_algorithms(),
         plugins=[],
     )

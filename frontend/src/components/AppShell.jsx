@@ -56,6 +56,7 @@ export function AppShell() {
               <Link to={`/classification/${lastFile.fileId}`}>Classification</Link>
               <Link to={`/clustering/${lastFile.fileId}`}>Clustering</Link>
               <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
+              <Link to={`/timeseries/${lastFile.fileId}`}>Time series</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Versions</Link>
             </div>
           </section>

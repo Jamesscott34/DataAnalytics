@@ -12,6 +12,7 @@ import { ClusteringPage } from './pages/ClusteringPage.jsx';
 import { EDAPage } from './pages/EDAPage.jsx';
 import { GroupsPage } from './pages/GroupsPage.jsx';
 import { PCAPage } from './pages/PCAPage.jsx';
+import { TimeSeriesPage } from './pages/TimeSeriesPage.jsx';
 import { QuickScanPage } from './pages/QuickScanPage.jsx';
 import { ScanResultViewPage } from './pages/ScanResultViewPage.jsx';
 import { RegressionPage } from './pages/RegressionPage.jsx';
@@ -152,6 +153,22 @@ function App() {
               element={
                 <ProtectedRoute roles={['admin', 'analyst']}>
                   <PCAPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/timeseries"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <TimeSeriesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/timeseries/:fileId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <TimeSeriesPage />
                 </ProtectedRoute>
               }
             />
