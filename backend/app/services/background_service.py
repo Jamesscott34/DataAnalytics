@@ -104,9 +104,15 @@ class BackgroundJobService:
                 from app.services.eda_service import eda_service
 
                 raw_file_id = job.payload.get("file_id")
+                if isinstance(raw_file_id, bool) or not isinstance(
+                    raw_file_id, (int, str)
+                ):
+                    raise BackgroundJobError(
+                        "EDA job requires a valid 'file_id' integer in the payload."
+                    )
                 try:
                     file_id = int(raw_file_id)
-                except (TypeError, ValueError) as exc:
+                except ValueError as exc:
                     raise BackgroundJobError(
                         "EDA job requires a valid 'file_id' integer in the payload."
                     ) from exc
