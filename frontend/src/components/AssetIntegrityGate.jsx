@@ -131,7 +131,7 @@ export function AssetIntegrityGate() {
                 <ul>
                   {status.new_files.map((file) => (
                     <li key={file.path}>
-                      <code>{file.path}</code> — SHA-256 {file.sha256}
+                      <code>{file.path}</code>: SHA-256 {file.sha256}
                     </li>
                   ))}
                 </ul>

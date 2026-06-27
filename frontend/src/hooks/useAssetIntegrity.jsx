@@ -7,7 +7,7 @@ import {
   markIntegritySessionUnlocked,
   unlockIntegrityManifest,
 } from '../api/assetIntegrity.js';
-import { useAuth } from './useAuth.jsx';
+import { useAuth } from './useAuth.js';
 
 /**
  * useAssetIntegrity
@@ -49,28 +49,31 @@ export function useAssetIntegrity() {
 
   useEffect(() => {
     if (!isAuthenticated || !canManageIntegrity) {
-      return;
+      return undefined;
     }
-    refreshStatus().then((nextStatus) => {
-      if (!nextStatus) {
-        return;
-      }
-      if (nextStatus.setup_required) {
-        setShowSetup(true);
-        return;
-      }
-      if (!nextStatus.unlocked && !isIntegritySessionUnlocked()) {
-        setShowUnlock(true);
-        return;
-      }
-      const hasChanges =
-        nextStatus.new_files.length > 0 ||
-        nextStatus.modified_files.length > 0 ||
-        nextStatus.removed_files.length > 0;
-      if (nextStatus.unlocked && hasChanges) {
-        setShowChanges(true);
-      }
-    });
+    const timer = window.setTimeout(() => {
+      refreshStatus().then((nextStatus) => {
+        if (!nextStatus) {
+          return;
+        }
+        if (nextStatus.setup_required) {
+          setShowSetup(true);
+          return;
+        }
+        if (!nextStatus.unlocked && !isIntegritySessionUnlocked()) {
+          setShowUnlock(true);
+          return;
+        }
+        const hasChanges =
+          nextStatus.new_files.length > 0 ||
+          nextStatus.modified_files.length > 0 ||
+          nextStatus.removed_files.length > 0;
+        if (nextStatus.unlocked && hasChanges) {
+          setShowChanges(true);
+        }
+      });
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [isAuthenticated, canManageIntegrity, refreshStatus]);
 
   const initialize = async (password, confirmPassword) => {

@@ -16,6 +16,7 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,
+    LoginResponse,
     LogoutRequest,
     RefreshRequest,
     TokenResponse,
@@ -48,23 +49,24 @@ def register(
 
 @router.post(
     "/login",
-    response_model=TokenResponse,
+    response_model=LoginResponse,
     summary="Authenticate and receive JWT tokens",
 )
 def login(
     payload: LoginRequest,
     request: Request,
     db: Annotated[Session, Depends(get_db)],
-) -> TokenResponse:
+) -> LoginResponse:
     """Validate credentials and return access and refresh tokens."""
     user = auth_service.authenticate(db, payload.email, payload.password)
     ip_address, user_agent = _client_meta(request)
-    return auth_service.issue_tokens(
+    tokens = auth_service.issue_tokens(
         db,
         user,
         ip_address=ip_address,
         user_agent=user_agent,
     )
+    return LoginResponse(**tokens.model_dump(), user=UserRead.model_validate(user))
 
 
 @router.post(

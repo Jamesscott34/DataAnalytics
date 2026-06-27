@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell.jsx';
 import { AssetIntegrityGate } from './components/AssetIntegrityGate.jsx';
 import { ProtectedRoute } from './components/ProtectedRoute.jsx';
-import { AuthProvider } from './hooks/useAuth.jsx';
+import { AuthProvider } from './context/AuthProvider.jsx';
 import { AssetsPage } from './pages/AssetsPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { HealthStatusPage } from './pages/HealthStatusPage.jsx';

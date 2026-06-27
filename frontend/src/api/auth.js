@@ -23,16 +23,16 @@ export async function registerUser(payload) {
  * Log in and store returned tokens.
  *
  * @param {{ email: string, password: string }} payload
- * @returns {Promise<import('../types/auth.js').TokenResponse>}
+ * @returns {Promise<import('../types/auth.js').LoginResponse>}
  */
 export async function loginUser(payload) {
-  const tokens = await apiRequest('/auth/login', {
+  const response = await apiRequest('/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  setTokens(tokens);
-  return tokens;
+  setTokens(response);
+  return response;
 }
 
 /**

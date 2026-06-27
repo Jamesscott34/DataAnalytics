@@ -60,3 +60,9 @@ class TokenResponse(BaseModel):
     refresh_token: str
     token_type: str = "bearer"
     expires_in: int
+
+
+class LoginResponse(TokenResponse):
+    """Login payload including tokens and the authenticated user profile."""
+
+    user: UserRead

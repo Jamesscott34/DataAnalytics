@@ -21,4 +21,8 @@
  * @property {number} expires_in
  */
 
+/**
+ * @typedef {TokenResponse & { user: User }} LoginResponse
+ */
+
 export {};

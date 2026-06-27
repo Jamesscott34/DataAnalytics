@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { LoginForm } from './LoginForm.jsx';
-import { AuthProvider } from '../hooks/useAuth.jsx';
+import { AuthProvider } from '../context/AuthProvider.jsx';
 import * as authApi from '../api/auth.js';
 
 describe('LoginForm', () => {
@@ -28,13 +28,13 @@ describe('LoginForm', () => {
       refresh_token: 'r',
       token_type: 'bearer',
       expires_in: 3600,
-    });
-    vi.spyOn(authApi, 'fetchCurrentUser').mockResolvedValue({
-      id: 1,
-      email: 'test@example.com',
-      full_name: null,
-      role: 'viewer',
-      is_active: true,
+      user: {
+        id: 1,
+        email: 'test@example.com',
+        full_name: null,
+        role: 'viewer',
+        is_active: true,
+      },
     });
 
     render(

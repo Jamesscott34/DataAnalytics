@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, beforeEach } from 'vitest';
 import { ProtectedRoute } from './ProtectedRoute.jsx';
-import { AuthProvider } from '../hooks/useAuth.jsx';
+import { AuthProvider } from '../context/AuthProvider.jsx';
 import { LoginPage } from '../pages/LoginPage.jsx';
 
 describe('ProtectedRoute', () => {

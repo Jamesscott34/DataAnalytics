@@ -43,6 +43,8 @@ def test_register_and_login_succeed(client: TestClient) -> None:
     assert tokens["token_type"] == "bearer"
     assert tokens["access_token"]
     assert tokens["refresh_token"]
+    assert tokens["user"]["email"] == "analyst@example.com"
+    assert tokens["user"]["role"] == "analyst"
 
 
 def test_invalid_credentials_rejected(client: TestClient) -> None:

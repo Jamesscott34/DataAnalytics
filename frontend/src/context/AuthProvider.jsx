@@ -1,19 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { fetchCurrentUser, loginUser, logoutUser, registerUser } from '../api/auth.js';
 import { getAccessToken } from '../api/tokenStorage.js';
-
-/**
- * @typedef {import('../types/auth.js').User} User
- */
-
-const AuthContext = createContext(null);
+import { AuthContext } from './authContext.js';
 
 /**
  * AuthProvider
@@ -28,14 +16,17 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadUser = useCallback(async () => {
+  const loadUser = useCallback(async (options = {}) => {
+    const { silent = false } = options;
     const token = getAccessToken();
     if (!token) {
       setUser(null);
       setLoading(false);
       return;
     }
-    setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
     setError(null);
     try {
       const profile = await fetchCurrentUser();
@@ -46,7 +37,9 @@ export function AuthProvider({ children }) {
         setError(err.message);
       }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -54,14 +47,12 @@ export function AuthProvider({ children }) {
     loadUser();
   }, [loadUser]);
 
-  const login = useCallback(
-    async (email, password) => {
-      setError(null);
-      await loginUser({ email, password });
-      await loadUser();
-    },
-    [loadUser],
-  );
+  const login = useCallback(async (email, password) => {
+    setError(null);
+    const response = await loginUser({ email, password });
+    setUser(response.user);
+    setLoading(false);
+  }, []);
 
   const register = useCallback(
     async (email, password, fullName) => {
@@ -92,28 +83,4 @@ export function AuthProvider({ children }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-/**
- * useAuth
- *
- * Access authentication state and actions.
- *
- * @returns {{
- *   user: User|null,
- *   loading: boolean,
- *   error: string|null,
- *   isAuthenticated: boolean,
- *   login: (email: string, password: string) => Promise<void>,
- *   register: (email: string, password: string, fullName?: string) => Promise<void>,
- *   logout: () => Promise<void>,
- *   reload: () => Promise<void>,
- * }}
- */
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
 }

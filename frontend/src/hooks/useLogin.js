@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from './useAuth.jsx';
+import { useAuth } from './useAuth.js';
 
 /**
  * useLogin
