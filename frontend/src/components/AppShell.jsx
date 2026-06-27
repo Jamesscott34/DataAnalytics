@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/groups', label: 'Dataset groups' },
   { to: '/upload', label: 'Upload CSV' },
   { to: '/assets', label: 'Sample datasets' },
+  { to: '/jobs', label: 'Background jobs' },
   { to: '/health', label: 'API health' },
 ];
 

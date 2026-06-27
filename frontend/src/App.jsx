@@ -7,6 +7,7 @@ import { AssetsPage } from './pages/AssetsPage.jsx';
 import { BusinessDashboardPage } from './pages/BusinessDashboardPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { HealthStatusPage } from './pages/HealthStatusPage.jsx';
+import { JobProgressPage } from './pages/JobProgressPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { ClassificationPage } from './pages/ClassificationPage.jsx';
 import { ClusteringPage } from './pages/ClusteringPage.jsx';
@@ -251,6 +252,22 @@ function App() {
               element={
                 <ProtectedRoute roles={['admin', 'analyst']}>
                   <AssetsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <JobProgressPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/jobs/:jobId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <JobProgressPage />
                 </ProtectedRoute>
               }
             />

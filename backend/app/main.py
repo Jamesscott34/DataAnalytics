@@ -28,6 +28,7 @@ from app.routers import (
     groups,
     health,
     insights,
+    jobs,
     models_regression,
     quick_scan,
     scans,
@@ -90,6 +91,7 @@ def create_app() -> FastAPI:
     app.include_router(assets.router, prefix=API_V1_PREFIX)
     app.include_router(asset_integrity.router, prefix=API_V1_PREFIX)
     app.include_router(audit.router, prefix=API_V1_PREFIX)
+    app.include_router(jobs.router, prefix=API_V1_PREFIX)
     app.include_router(scans.router, prefix=API_V1_PREFIX)
     app.include_router(eda.router, prefix=API_V1_PREFIX)
     app.include_router(business.router, prefix=API_V1_PREFIX)
