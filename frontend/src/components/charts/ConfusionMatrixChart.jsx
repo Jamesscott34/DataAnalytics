@@ -10,7 +10,9 @@ export function ConfusionMatrixChart({ labels = [], matrix = [] }) {
       <figcaption>Confusion matrix heatmap</figcaption>
       <div
         className="matrix-heatmap"
-        style={{ gridTemplateColumns: `repeat(${labels.length + 1}, minmax(3rem, 1fr))` }}
+        style={{
+          gridTemplateColumns: `repeat(${labels.length + 1}, minmax(3rem, 1fr))`,
+        }}
       >
         <span />
         {labels.map((label) => (

@@ -17,7 +17,10 @@ export function MissingValuesChart({ columns = [] }) {
     );
   }
 
-  const maxPercent = Math.max(...withMissing.map((column) => column.missing_percent), 1);
+  const maxPercent = Math.max(
+    ...withMissing.map((column) => column.missing_percent),
+    1,
+  );
 
   return (
     <figure className="chart-card" aria-label="Missing values by column">
@@ -34,7 +37,9 @@ export function MissingValuesChart({ columns = [] }) {
                 style={{ width: `${(column.missing_percent / maxPercent) * 100}%` }}
               />
             </div>
-            <span className="bar-chart-count">{column.missing_percent.toFixed(1)}%</span>
+            <span className="bar-chart-count">
+              {column.missing_percent.toFixed(1)}%
+            </span>
           </div>
         ))}
       </div>

@@ -62,7 +62,10 @@ export function ForecastChart({ title = 'Forecast', history = [], forecast = [] 
   const firstForecastIndex = points.findIndex((point) => point.kind === 'forecast');
 
   return (
-    <figure className="chart-card forecast-chart" aria-label={`Line chart for ${title}`}>
+    <figure
+      className="chart-card forecast-chart"
+      aria-label={`Line chart for ${title}`}
+    >
       <figcaption>{title}</figcaption>
       <svg
         className="forecast-chart-svg"
@@ -93,14 +96,21 @@ export function ForecastChart({ title = 'Forecast', history = [], forecast = [] 
             className="forecast-divider"
           />
         )}
-        {actualPath && <path d={actualPath} className="forecast-line forecast-line--actual" />}
+        {actualPath && (
+          <path d={actualPath} className="forecast-line forecast-line--actual" />
+        )}
         {forecastPath && (
           <path d={forecastPath} className="forecast-line forecast-line--forecast" />
         )}
         <text x={padding.left} y={height - 8} className="forecast-label">
           {points[0]?.label}
         </text>
-        <text x={width - padding.right} y={height - 8} textAnchor="end" className="forecast-label">
+        <text
+          x={width - padding.right}
+          y={height - 8}
+          textAnchor="end"
+          className="forecast-label"
+        >
           {points[points.length - 1]?.label}
         </text>
         <text x={8} y={padding.top + 8} className="forecast-label">
@@ -111,8 +121,12 @@ export function ForecastChart({ title = 'Forecast', history = [], forecast = [] 
         </text>
       </svg>
       <div className="forecast-legend" aria-hidden="true">
-        <span className="forecast-legend-item forecast-legend-item--actual">Actual</span>
-        <span className="forecast-legend-item forecast-legend-item--forecast">Forecast</span>
+        <span className="forecast-legend-item forecast-legend-item--actual">
+          Actual
+        </span>
+        <span className="forecast-legend-item forecast-legend-item--forecast">
+          Forecast
+        </span>
       </div>
     </figure>
   );

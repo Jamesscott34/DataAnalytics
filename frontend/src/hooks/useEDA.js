@@ -40,7 +40,10 @@ export function useEDA(fileId) {
         if (response?.async_job && response.job_id) {
           setJobProgress({ jobId: response.job_id, progress: 0, status: 'queued' });
           let job = await getJob(response.job_id);
-          while (!cancelRef.current && !['complete', 'failed', 'cancelled'].includes(job.status)) {
+          while (
+            !cancelRef.current &&
+            !['complete', 'failed', 'cancelled'].includes(job.status)
+          ) {
             setJobProgress({
               jobId: job.id,
               progress: job.progress,
