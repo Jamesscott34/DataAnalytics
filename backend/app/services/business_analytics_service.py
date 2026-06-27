@@ -137,6 +137,13 @@ class BusinessAnalyticsService:
             raise BusinessAnalyticsError("Business analytics has not been run for this file")
         return result
 
+    def get_result(self, result_id: str) -> BusinessReport:
+        """Return a stored report by result id."""
+        result = self._results.get(result_id)
+        if result is None:
+            raise BusinessAnalyticsError("Business analytics result not found")
+        return result
+
     def _store(self, report: BusinessReport) -> None:
         self._results[report.result_id] = report
         self._results_by_file[report.file_id] = report

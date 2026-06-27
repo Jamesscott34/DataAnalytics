@@ -27,6 +27,7 @@ from app.routers import (
     export,
     groups,
     health,
+    insights,
     models_regression,
     quick_scan,
     scans,
@@ -97,6 +98,7 @@ def create_app() -> FastAPI:
     app.include_router(models_regression.router, prefix=API_V1_PREFIX)
     app.include_router(explainability.router, prefix=API_V1_PREFIX)
     app.include_router(quick_scan.router, prefix=API_V1_PREFIX)
+    app.include_router(insights.router, prefix=API_V1_PREFIX)
     app.include_router(export.router, prefix=API_V1_PREFIX)
 
     return app

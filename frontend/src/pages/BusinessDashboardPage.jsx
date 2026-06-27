@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DatasetFilePicker } from '../components/DatasetFilePicker.jsx';
 import { DatasetFileToolbar } from '../components/DatasetFileToolbar.jsx';
+import { InsightsPanel } from '../components/InsightsPanel.jsx';
 import { KPICard } from '../components/KPICard.jsx';
 import { useBusinessAnalytics } from '../hooks/useBusinessAnalytics.js';
 import { getLastFile, setLastFile } from '../utils/lastFile.js';
@@ -94,6 +95,7 @@ export function BusinessDashboardPage() {
               <KPICard key={item.label} item={item} />
             ))}
           </div>
+          <InsightsPanel resultId={report.result_id} analysisType="business" />
           {report.revenue_by_month.length > 0 && (
             <>
               <h2>Revenue by month</h2>

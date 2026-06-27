@@ -1,3 +1,4 @@
+import { InsightsPanel } from './InsightsPanel.jsx';
 import { ShapSummaryPanel } from './ShapSummaryPanel.jsx';
 import { FeatureImportanceChart } from './charts/FeatureImportanceChart.jsx';
 
@@ -39,6 +40,7 @@ export function RegressionResults({ result }) {
 
       <FeatureImportanceChart data={result.feature_importance} />
       <ShapSummaryPanel explainability={result.explainability} />
+      <InsightsPanel resultId={result.result_id} analysisType="regression" />
 
       <div className="table-scroll">
         <table className="data-table">
