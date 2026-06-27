@@ -167,7 +167,7 @@
 
 ---
 
-## Task 14 — EDA UI
+## Task 14 — EDA UI ✅
 
 | Field | Value |
 |-------|-------|
@@ -179,7 +179,7 @@
 
 ---
 
-## Task 15 — Regression
+## Task 15 — Regression ✅
 
 | Field | Value |
 |-------|-------|
@@ -191,7 +191,7 @@
 
 ---
 
-## Task 16 — Classification
+## Task 16 — Classification ✅
 
 | Field | Value |
 |-------|-------|
@@ -203,7 +203,7 @@
 
 ---
 
-## Task 17 — Clustering and PCA
+## Task 17 — Clustering and PCA ✅
 
 | Field | Value |
 |-------|-------|
@@ -215,7 +215,7 @@
 
 ---
 
-## Task 18 — Time series
+## Task 18 — Time series ✅
 
 | Field | Value |
 |-------|-------|
@@ -227,7 +227,7 @@
 
 ---
 
-## Task 19 — Similarity / recommendation
+## Task 19 — Similarity / recommendation ✅
 
 | Field | Value |
 |-------|-------|
@@ -239,7 +239,7 @@
 
 ---
 
-## Task 20 — Explainability
+## Task 20 — Explainability ✅
 
 | Field | Value |
 |-------|-------|
@@ -251,7 +251,7 @@
 
 ---
 
-## Task 21 — Business analytics
+## Task 21 — Business analytics ✅
 
 | Field | Value |
 |-------|-------|
@@ -263,7 +263,7 @@
 
 ---
 
-## Task 22 — AI insights
+## Task 22 — AI insights ✅
 
 | Field | Value |
 |-------|-------|
@@ -275,7 +275,7 @@
 
 ---
 
-## Task 23 — Pest control workflow UI
+## Task 23 — Pest control workflow UI ✅
 
 | Field | Value |
 |-------|-------|
@@ -287,7 +287,7 @@
 
 ---
 
-## Task 24 — Result charts and export views
+## Task 24 — Result charts and export views ✅
 
 | Field | Value |
 |-------|-------|
@@ -299,7 +299,7 @@
 
 ---
 
-## Task 25 — Export reports
+## Task 25 — Export reports ✅
 
 | Field | Value |
 |-------|-------|
@@ -311,7 +311,7 @@
 
 ---
 
-## Task 26 — Background jobs
+## Task 26 — Background jobs ✅
 
 | Field | Value |
 |-------|-------|
@@ -323,7 +323,7 @@
 
 ---
 
-## Task 27 — Plugin registry
+## Task 27 — Plugin registry ✅
 
 | Field | Value |
 |-------|-------|
@@ -335,7 +335,7 @@
 
 ---
 
-## Task 28 — Monitoring
+## Task 28 — Monitoring ✅
 
 | Field | Value |
 |-------|-------|
@@ -347,7 +347,7 @@
 
 ---
 
-## Task 29 — Backend test suite
+## Task 29 — Backend test suite ✅
 
 | Field | Value |
 |-------|-------|
@@ -359,7 +359,7 @@
 
 ---
 
-## Task 30 — Frontend test suite
+## Task 30 — Frontend test suite ✅
 
 | Field | Value |
 |-------|-------|
@@ -371,7 +371,7 @@
 
 ---
 
-## Task 31 — CI
+## Task 31 — CI ✅
 
 | Field | Value |
 |-------|-------|
@@ -383,7 +383,7 @@
 
 ---
 
-## Task 32 — Docker
+## Task 32 — Docker ✅
 
 | Field | Value |
 |-------|-------|
@@ -395,7 +395,7 @@
 
 ---
 
-## Task 33 — Deployment
+## Task 33 — Deployment ✅
 
 | Field | Value |
 |-------|-------|
@@ -407,7 +407,7 @@
 
 ---
 
-## Task 34 — Full documentation
+## Task 34 — Full documentation ✅
 
 | Field | Value |
 |-------|-------|
@@ -419,7 +419,7 @@
 
 ---
 
-## Task 35 — Final validation
+## Task 35 — Final validation ✅
 
 | Field | Value |
 |-------|-------|
@@ -449,10 +449,12 @@
 
 ## Project status
 
-### Phase 0 — Planning
+**All 35 tasks complete** on branch `feature/versioning`. Latest commit: `ffb9340`.
+
+### Phase 0 — Planning ✅
 Complete. Architecture, API, database schema, component tree, and this task list.
 
-### Phase 1 — Foundation (Tasks 1–5)
+### Phase 1 — Foundation (Tasks 1–5) ✅
 Complete.
 - Task 1: repo structure, planning docs (`ee25c24`)
 - Task 2: FastAPI `/api/v1/health` (`7a935c5`)
@@ -460,19 +462,51 @@ Complete.
 - Task 4: SQLAlchemy models, Alembic `001_initial` (`7654e53`)
 - Task 5: `.env` config, logging, error responses (`eb5172b`)
 
-### Phase 2 — Auth and file pipeline (Tasks 6–11)
-Complete. Tasks 6–11 delivered auth, secure upload, scanner, temp assets,
-integrity manifest, audit logging, and dataset versioning. Task 12 (EDA service)
-is complete. Next: Task 14 (EDA UI).
+### Phase 2 — Auth and file pipeline (Tasks 6–11) ✅
+Complete. Auth, secure upload, scanner, temp assets, audit logging, dataset versioning.
 
-### Phase 3 — Analysis services (Tasks 12–19)
-In progress. Tasks 12–13 complete (EDA service, SQL analysis). Next: Task 14 (EDA UI).
+### Phase 3 — Analysis services (Tasks 12–19) ✅
+Complete.
+- Task 12: EDA service (`2128f66`)
+- Task 13: SQL analysis (`2128f66`)
+- Task 14: EDA UI (`ba33b19`)
+- Task 15: Regression (`6e669cd`)
+- Task 16: Classification (`1a9c3c8`)
+- Task 17: Clustering and PCA (`84681ba`)
+- Task 18: Time series (`c51b973`)
+- Task 19: Similarity / recommendation (`ecaeab2`)
 
-### Phase 4 — Insights, UI, and export (Tasks 20–25)
-Not started. Explainability, business KPIs, charts, PDF/JSON/CSV export.
+### Phase 4 — Insights, UI, and export (Tasks 20–25) ✅
+Complete.
+- Task 20: Explainability (`10a4444`)
+- Task 21: Business analytics (`d7bf655`)
+- Task 22: AI insights (`ab79724`)
+- Task 23: Pest control workflow (`f4785df`)
+- Task 24: Result charts (`109d92b`)
+- Task 25: Export reports (`c594dd1`)
 
-### Phase 5 — Jobs, plugins, monitoring (Tasks 26–28)
-Not started. Background tasks, plugin registry, health/metrics endpoints.
+### Phase 5 — Jobs, plugins, monitoring (Tasks 26–28) ✅
+Complete.
+- Task 26: Background jobs (`ea474cd`)
+- Task 27: Plugin registry (`3b95a91`)
+- Task 28: Monitoring (`05ffc4c`)
 
-### Phase 6 — Quality and shipping (Tasks 29–35)
-Not started. Test coverage, CI, Docker, deployment, docs, final validation.
+### Phase 6 — Quality and shipping (Tasks 29–35) ✅
+Complete.
+- Task 29: Backend coverage 86% on services (`26b22e9`)
+- Task 30: Frontend Vitest suite — 38 tests green (across feature commits)
+- Task 31: GitHub Actions CI (`b0d806c`)
+- Task 32: Docker + docker-compose (`f7246f7`)
+- Task 33: Deployment docs (`bee045e`)
+- Task 34: Full documentation (`18b8df7`)
+- Task 35: End-to-end validation (`ffb9340`)
+
+### Validation summary
+
+| Check | Result |
+|-------|--------|
+| Backend tests | 99 passed |
+| Backend coverage (`app/services`) | 86% |
+| Frontend lint / test / build | Pass (38 tests) |
+| `./scripts/validate.sh` | Pass |
+| `docker compose build` | Pass |
