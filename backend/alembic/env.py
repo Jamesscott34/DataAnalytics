@@ -10,14 +10,19 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.config import get_settings
-from app.database import Base
+from app.database import Base, ensure_sqlite_parent_dir
 from app.models import UploadedFile, User, UserSession  # noqa: F401
 
 config = context.config
 settings = get_settings()
 configured_url = config.get_main_option("sqlalchemy.url")
-if configured_url == "sqlite:///./data/app.db":
-    config.set_main_option("sqlalchemy.url", settings.database_url)
+database_url = (
+    settings.database_url
+    if configured_url == "sqlite:///./data/app.db"
+    else configured_url
+)
+ensure_sqlite_parent_dir(database_url)
+config.set_main_option("sqlalchemy.url", database_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

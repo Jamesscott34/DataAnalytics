@@ -79,6 +79,7 @@ jobs:
           .venv-e2e/bin/pip install --upgrade pip
           .venv-e2e/bin/pip install -r requirements-dev.txt
           .venv-e2e/bin/pip install "httpx2>=2.0.0,<3.0.0"
+          mkdir -p data data/uploads
           .venv-e2e/bin/alembic upgrade head
       - name: Install frontend dependencies
         working-directory: frontend
