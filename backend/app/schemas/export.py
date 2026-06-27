@@ -16,7 +16,7 @@ class SavedScanResult(BaseModel):
     """Metadata for a file saved under scan_results/."""
 
     filename: str
-    format: Literal["markdown", "pdf"]
+    format: Literal["markdown", "pdf", "json", "csv"]
     size_bytes: int
     saved_at: datetime
     view_url: str

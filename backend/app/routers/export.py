@@ -56,6 +56,20 @@ def download_scan_result(
                 media_type="text/markdown; charset=utf-8",
                 headers={"Content-Disposition": f'attachment; filename="{filename}"'},
             )
+        if filename.lower().endswith(".json"):
+            json_content = scan_result_storage.read_text(filename)
+            return Response(
+                content=json_content,
+                media_type="application/json",
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
+        if filename.lower().endswith(".csv"):
+            csv_content = scan_result_storage.read_text(filename)
+            return Response(
+                content=csv_content,
+                media_type="text/csv; charset=utf-8",
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
     except ScanResultStorageError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -89,6 +103,20 @@ def view_scan_result(
             return Response(
                 content=md_content,
                 media_type="text/markdown; charset=utf-8",
+                headers={"Content-Disposition": f'inline; filename="{filename}"'},
+            )
+        if filename.lower().endswith(".json"):
+            json_content = scan_result_storage.read_text(filename)
+            return Response(
+                content=json_content,
+                media_type="application/json",
+                headers={"Content-Disposition": f'inline; filename="{filename}"'},
+            )
+        if filename.lower().endswith(".csv"):
+            csv_content = scan_result_storage.read_text(filename)
+            return Response(
+                content=csv_content,
+                media_type="text/csv; charset=utf-8",
                 headers={"Content-Disposition": f'inline; filename="{filename}"'},
             )
     except ScanResultStorageError as exc:
@@ -125,6 +153,60 @@ def export_markdown(
         content=markdown,
         original_filename=report.filename,
         extension="md",
+    )
+    return ExportSavedResponse(saved=saved, download_filename=saved.filename)
+
+
+@router.post(
+    "/json",
+    response_model=ExportSavedResponse,
+    summary="Export quick-scan report as JSON",
+)
+def export_json(
+    request: ExportReportRequest,
+    _: Annotated[User, Depends(require_viewer)],
+) -> ExportSavedResponse:
+    """Generate, save, and return a JSON analytics report."""
+    try:
+        report = quick_scan_service.get_report(request.report_id)
+    except QuickScanError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    json_report = report_service.to_json(report)
+    saved = scan_result_storage.save_text(
+        content=json_report,
+        original_filename=report.filename,
+        extension="json",
+    )
+    return ExportSavedResponse(saved=saved, download_filename=saved.filename)
+
+
+@router.post(
+    "/csv",
+    response_model=ExportSavedResponse,
+    summary="Export quick-scan report as CSV",
+)
+def export_csv(
+    request: ExportReportRequest,
+    _: Annotated[User, Depends(require_viewer)],
+) -> ExportSavedResponse:
+    """Generate, save, and return a CSV analytics report."""
+    try:
+        report = quick_scan_service.get_report(request.report_id)
+    except QuickScanError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+
+    csv_report = report_service.to_csv(report)
+    saved = scan_result_storage.save_text(
+        content=csv_report,
+        original_filename=report.filename,
+        extension="csv",
     )
     return ExportSavedResponse(saved=saved, download_filename=saved.filename)
 

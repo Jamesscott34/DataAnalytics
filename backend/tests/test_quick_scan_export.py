@@ -1,5 +1,6 @@
 """Quick scan and export tests."""
 
+import json
 import re
 from pathlib import Path
 
@@ -96,6 +97,33 @@ def test_quick_scan_runs_analyses_and_exports(
     assert "### EDA charts" in md_text
     assert "region (bar chart)" in md_text or "units (histogram)" in md_text
 
+    json_response = client.post(
+        "/api/v1/export/json",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"report_id": report_id},
+    )
+    assert json_response.status_code == 200
+    json_body = json_response.json()
+    assert re.match(
+        r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.json",
+        json_body["saved"]["filename"],
+    )
+    saved_json = scan_results_dir / json_body["saved"]["filename"]
+    assert saved_json.is_file()
+    assert json.loads(saved_json.read_text(encoding="utf-8"))["report_id"] == report_id
+
+    csv_response = client.post(
+        "/api/v1/export/csv",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"report_id": report_id},
+    )
+    assert csv_response.status_code == 200
+    csv_body = csv_response.json()
+    assert re.match(r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.csv", csv_body["saved"]["filename"])
+    saved_csv = scan_results_dir / csv_body["saved"]["filename"]
+    assert saved_csv.is_file()
+    assert "section,name,value" in saved_csv.read_text(encoding="utf-8")
+
     pdf_response = client.post(
         "/api/v1/export/pdf",
         headers={"Authorization": f"Bearer {token}"},
@@ -114,10 +142,12 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert list_response.status_code == 200
     listed = list_response.json()
-    assert listed["total"] == 2
+    assert listed["total"] == 4
     filenames = {item["filename"] for item in listed["items"]}
     assert md_body["saved"]["filename"] in filenames
     assert pdf_body["saved"]["filename"] in filenames
+    assert json_body["saved"]["filename"] in filenames
+    assert csv_body["saved"]["filename"] in filenames
 
     view_md = client.get(
         f"/api/v1/export/scan-results/{md_body['saved']['filename']}",
@@ -125,6 +155,13 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert view_md.status_code == 200
     assert "Analysis Report" in view_md.text
+
+    view_json = client.get(
+        f"/api/v1/export/scan-results/{json_body['saved']['filename']}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert view_json.status_code == 200
+    assert view_json.json()["report_id"] == report_id
 
     view_pdf = client.get(
         f"/api/v1/export/scan-results/{pdf_body['saved']['filename']}",

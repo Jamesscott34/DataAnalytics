@@ -52,12 +52,12 @@ class ScanResultStorage:
         original_filename: str,
         extension: str = "md",
     ) -> SavedScanResult:
-        """Write text content (Markdown) to scan_results."""
+        """Write text content to scan_results."""
         self.ensure_directory()
         filename = self._unique_filename(self.build_filename(original_filename, extension))
         path = self._root / filename
         path.write_text(content, encoding="utf-8")
-        return self._to_metadata(path, format_label="markdown")
+        return self._to_metadata(path, format_label=self._format_for_suffix(path.suffix))
 
     def list_results(self) -> list[SavedScanResult]:
         """List saved scan result files newest first."""
@@ -65,7 +65,7 @@ class ScanResultStorage:
         files = [
             path
             for path in self._root.iterdir()
-            if path.is_file() and path.suffix.lower() in {".md", ".pdf"}
+            if path.is_file() and path.suffix.lower() in {".md", ".pdf", ".json", ".csv"}
         ]
         files.sort(key=lambda path: path.stat().st_mtime, reverse=True)
         return [self._to_metadata(path) for path in files]
@@ -83,10 +83,10 @@ class ScanResultStorage:
         return path
 
     def read_text(self, filename: str) -> str:
-        """Read a saved Markdown report."""
+        """Read a saved text report."""
         path = self.resolve_path(filename)
-        if path.suffix.lower() != ".md":
-            raise ScanResultStorageError("File is not a Markdown report")
+        if path.suffix.lower() not in {".md", ".json", ".csv"}:
+            raise ScanResultStorageError("File is not a text report")
         return path.read_text(encoding="utf-8")
 
     def read_bytes(self, filename: str) -> bytes:
@@ -109,7 +109,7 @@ class ScanResultStorage:
 
     def _to_metadata(self, path: Path, format_label: str | None = None) -> SavedScanResult:
         suffix = path.suffix.lower()
-        resolved_format = format_label or ("pdf" if suffix == ".pdf" else "markdown")
+        resolved_format = format_label or self._format_for_suffix(suffix)
         stat = path.stat()
         return SavedScanResult(
             filename=path.name,
@@ -119,6 +119,15 @@ class ScanResultStorage:
             view_url=f"/api/v1/export/scan-results/{path.name}",
             download_url=f"/api/v1/export/scan-results/{path.name}/download",
         )
+
+    def _format_for_suffix(self, suffix: str) -> str:
+        formats = {
+            ".csv": "csv",
+            ".json": "json",
+            ".md": "markdown",
+            ".pdf": "pdf",
+        }
+        return formats.get(suffix.lower(), "markdown")
 
 
 scan_result_storage = ScanResultStorage()

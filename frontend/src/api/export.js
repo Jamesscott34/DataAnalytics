@@ -32,6 +32,34 @@ export async function saveMarkdownReport(reportId) {
 }
 
 /**
+ * Save a quick-scan report as JSON in scan_results/.
+ *
+ * @param {string} reportId
+ * @returns {Promise<{ saved: object, download_filename: string }>}
+ */
+export async function saveJsonReport(reportId) {
+  return apiRequest('/export/json', {
+    method: 'POST',
+    headers: authHeaders({ Accept: 'application/json' }),
+    body: JSON.stringify({ report_id: reportId }),
+  });
+}
+
+/**
+ * Save a quick-scan report as CSV in scan_results/.
+ *
+ * @param {string} reportId
+ * @returns {Promise<{ saved: object, download_filename: string }>}
+ */
+export async function saveCsvReport(reportId) {
+  return apiRequest('/export/csv', {
+    method: 'POST',
+    headers: authHeaders({ Accept: 'application/json' }),
+    body: JSON.stringify({ report_id: reportId }),
+  });
+}
+
+/**
  * Save a quick-scan report as PDF in scan_results/.
  *
  * @param {string} reportId

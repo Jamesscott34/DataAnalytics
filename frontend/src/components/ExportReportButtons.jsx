@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getScanResultViewPath, saveMarkdownReport, savePdfReport, downloadScanResult } from '../api/export.js';
+import {
+  getScanResultViewPath,
+  saveCsvReport,
+  saveJsonReport,
+  saveMarkdownReport,
+  savePdfReport,
+  downloadScanResult,
+} from '../api/export.js';
 
 /**
  * ExportReportButtons
@@ -19,10 +26,7 @@ export function ExportReportButtons({ report, exporting, onExportStart, onExport
     onExportStart?.();
     setMessage(null);
     try {
-      const response =
-        format === 'md'
-          ? await saveMarkdownReport(report.report_id)
-          : await savePdfReport(report.report_id);
+      const response = await saveReport(format, report.report_id);
       setLastSaved(response.saved);
       setMessage(`Saved as ${response.saved.filename}`);
       await downloadScanResult(response.saved.filename);
@@ -49,6 +53,22 @@ export function ExportReportButtons({ report, exporting, onExportStart, onExport
           type="button"
           className="secondary-button"
           disabled={exporting}
+          onClick={() => handleExport('json')}
+        >
+          Save JSON
+        </button>
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={exporting}
+          onClick={() => handleExport('csv')}
+        >
+          Save CSV
+        </button>
+        <button
+          type="button"
+          className="secondary-button"
+          disabled={exporting}
           onClick={() => handleExport('pdf')}
         >
           Save PDF
@@ -70,4 +90,17 @@ export function ExportReportButtons({ report, exporting, onExportStart, onExport
       )}
     </div>
   );
+}
+
+function saveReport(format, reportId) {
+  if (format === 'md') {
+    return saveMarkdownReport(reportId);
+  }
+  if (format === 'json') {
+    return saveJsonReport(reportId);
+  }
+  if (format === 'csv') {
+    return saveCsvReport(reportId);
+  }
+  return savePdfReport(reportId);
 }

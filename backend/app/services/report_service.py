@@ -1,6 +1,8 @@
 """Report generation service for Markdown and PDF exports."""
 
-from io import BytesIO
+from io import BytesIO, StringIO
+import csv
+import json
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
@@ -13,6 +15,42 @@ from app.services.report_charts import eda_charts_to_markdown, eda_charts_to_pdf
 
 class ReportService:
     """Builds downloadable analysis reports from quick-scan bundles."""
+
+    def to_json(self, report: QuickScanReport) -> str:
+        """Render a quick-scan report as indented JSON."""
+        return json.dumps(report.model_dump(mode="json"), indent=2)
+
+    def to_csv(self, report: QuickScanReport) -> str:
+        """Render a quick-scan report as key/value CSV rows."""
+        buffer = StringIO()
+        writer = csv.writer(buffer)
+        writer.writerow(["section", "name", "value"])
+        writer.writerow(["file", "filename", report.filename])
+        writer.writerow(["file", "file_id", report.file_id])
+        writer.writerow(["file", "rows", report.row_count])
+        writer.writerow(["file", "columns", report.column_count])
+        writer.writerow(["file", "sha256", report.file_hash])
+        for step in report.steps:
+            writer.writerow(["scan_step", step.step, step.status])
+        if report.eda:
+            summary = report.eda.summary
+            writer.writerow(["eda", "missing_cells", summary.missing_cells])
+            writer.writerow(["eda", "missing_percent", summary.missing_percent])
+            writer.writerow(["eda", "duplicate_rows", summary.duplicate_row_count])
+            for column in report.eda.columns:
+                writer.writerow(["eda_column", column.name, column.inferred_type])
+        if report.regression:
+            writer.writerow(["regression", "algorithm", report.regression.algorithm])
+            writer.writerow(["regression", "target", report.regression.target_column])
+            writer.writerow(["regression", "mae", report.regression.metrics.mae])
+            writer.writerow(["regression", "rmse", report.regression.metrics.rmse])
+            writer.writerow(["regression", "r2", report.regression.metrics.r2])
+        if report.classification:
+            writer.writerow(["classification", "algorithm", report.classification.algorithm])
+            writer.writerow(["classification", "target", report.classification.target_column])
+            writer.writerow(["classification", "accuracy", report.classification.metrics.accuracy])
+            writer.writerow(["classification", "f1", report.classification.metrics.f1])
+        return buffer.getvalue()
 
     def to_markdown(self, report: QuickScanReport) -> str:
         """Render a quick-scan report as Markdown."""
