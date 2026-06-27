@@ -336,7 +336,7 @@ Export JSON / CSV / PDF
 | **ML / stats** | scikit-learn, statsmodels |
 | **Reports** | ReportLab |
 | **Frontend** | React 18, Vite, Vitest, ESLint, Prettier, Recharts |
-| **Testing** | pytest, pytest-cov, Playwright |
+| **Testing** | pytest, pytest-cov |
 | **Quality** | ruff, black, isort, mypy, bandit |
 | **Ops** | Docker, Docker Compose, GitHub Actions |
 
@@ -358,7 +358,6 @@ Export JSON / CSV / PDF
 │       ├── components/      # Reusable UI including charts/
 │       ├── hooks/           # Data-fetching and form state
 │       └── api/             # HTTP client layer
-├── e2e/                     # Playwright end-to-end tests
 ├── docs/                    # Architecture, API, schema, security guides
 ├── temp_assets/             # Bundled sample CSV datasets
 ├── docker/                  # Dockerfiles and nginx config
@@ -449,9 +448,8 @@ Frontend: [frontend/.env.example](frontend/.env.example) — set `VITE_API_BASE_
 | Frontend unit | `cd frontend && npm run test -- --run` | 41+ tests |
 | Lint / format | ruff, black, isort, eslint, prettier | Enforced in CI |
 | Static analysis | mypy, bandit | Enforced in CI |
-| End-to-end | `cd e2e && npm test` | Upload → EDA → export |
 
-GitHub Actions runs all of the above on every push and pull request to `main`.
+GitHub Actions runs backend and frontend checks on every push and pull request to `main`.
 
 ---
 
