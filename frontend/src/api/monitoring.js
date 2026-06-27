@@ -12,3 +12,11 @@ import { apiRequest } from './client.js';
 export async function fetchHealth() {
   return apiRequest('/health');
 }
+
+export async function fetchMonitoringHealth() {
+  return apiRequest('/monitoring/health');
+}
+
+export async function fetchMonitoringMetrics() {
+  return apiRequest('/monitoring/metrics');
+}

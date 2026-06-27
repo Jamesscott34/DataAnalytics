@@ -8,6 +8,7 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from app.config import get_settings
+from app.services.monitoring_service import monitoring_service
 from app.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -45,6 +46,12 @@ class RequestTimingMiddleware(BaseHTTPMiddleware):
                     "status_code": response.status_code,
                 },
             )
+
+        monitoring_service.record_request(
+            path=request.url.path,
+            status_code=response.status_code,
+            duration_ms=duration_ms,
+        )
 
         response.headers["X-Process-Time-Ms"] = str(round(duration_ms, 2))
         return response
