@@ -74,3 +74,100 @@ def test_force_background_flag_queues_eda(client: TestClient) -> None:
     )
     assert response.status_code == 202
     assert response.json()["async_job"] is True
+
+
+def test_eda_background_job_completes_with_result_payload(
+    client: TestClient, db_session
+) -> None:
+    """Queued EDA jobs run to completion with the expected result payload."""
+    from app.schemas.jobs import JobCreateRequest
+    from app.services.background_service import background_job_service
+
+    eda_service.clear_cache()
+    token = _analyst_token(client)
+    upload = client.post(
+        "/api/v1/uploads",
+        headers={"Authorization": f"Bearer {token}"},
+        files={"file": ("bg-eda.csv", b"x,y\n1,2\n3,4\n", "text/csv")},
+    )
+    file_id = upload.json()["file_id"]
+
+    queued = background_job_service.enqueue(
+        db_session,
+        owner_id=1,
+        request=JobCreateRequest(
+            job_type="eda",
+            payload={"file_id": file_id, "force_refresh": True},
+        ),
+        autostart=False,
+    )
+
+    completed = background_job_service.run_job(db_session, job_id=queued.id)
+
+    assert completed.status == "complete"
+    assert completed.progress == 100
+    assert completed.result["file_id"] == file_id
+    assert completed.result["result_id"]
+    assert completed.result["row_count"] == 2
+    assert completed.result["sampled"] is False
+
+
+def test_cancelled_eda_background_job_skips_analysis(
+    client: TestClient, db_session, monkeypatch
+) -> None:
+    """Cancelled EDA jobs do not invoke eda_service.run_for_file."""
+    from app.schemas.jobs import JobCreateRequest
+    from app.services.background_service import background_job_service
+
+    eda_service.clear_cache()
+    token = _analyst_token(client)
+    upload = client.post(
+        "/api/v1/uploads",
+        headers={"Authorization": f"Bearer {token}"},
+        files={"file": ("cancel-eda.csv", b"x,y\n1,2\n", "text/csv")},
+    )
+    file_id = upload.json()["file_id"]
+
+    queued = background_job_service.enqueue(
+        db_session,
+        owner_id=1,
+        request=JobCreateRequest(
+            job_type="eda",
+            payload={"file_id": file_id, "force_refresh": True},
+        ),
+        autostart=False,
+    )
+
+    background_job_service.cancel(db_session, job_id=queued.id, owner_id=1)
+
+    called = {"count": 0}
+    original_run = eda_service.run_for_file
+
+    def _spy_run_for_file(*args, **kwargs):
+        called["count"] += 1
+        return original_run(*args, **kwargs)
+
+    monkeypatch.setattr(eda_service, "run_for_file", _spy_run_for_file)
+
+    rerun = background_job_service.run_job(db_session, job_id=queued.id)
+
+    assert rerun.status == "cancelled"
+    assert called["count"] == 0
+
+
+def test_eda_background_job_rejects_invalid_file_id(db_session) -> None:
+    """EDA jobs with invalid file_id payloads fail with a clear error."""
+    from app.schemas.jobs import JobCreateRequest
+    from app.services.background_service import background_job_service
+
+    queued = background_job_service.enqueue(
+        db_session,
+        owner_id=1,
+        request=JobCreateRequest(job_type="eda", payload={}),
+        autostart=False,
+    )
+
+    failed = background_job_service.run_job(db_session, job_id=queued.id)
+
+    assert failed.status == "failed"
+    assert "file_id" in failed.error.lower()

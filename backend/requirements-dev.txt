@@ -1,5 +1,6 @@
 -r requirements.txt
 pytest>=8.3.0,<9.0.0
+# Starlette TestClient requires the httpx2 package (not the legacy httpx package).
 httpx2>=2.0.0,<3.0.0
 ruff>=0.8.0,<1.0.0
 black>=24.10.0,<25.0.0

@@ -18,8 +18,8 @@ class XLSXConversionService:
     def convert_bytes(self, content: bytes, *, filename: str) -> tuple[str, bytes]:
         """Convert XLSX bytes to CSV text bytes."""
         safe_name = sanitize_workbook_filename(filename)
-        if not safe_name.lower().endswith((".xlsx", ".xls")):
-            raise XLSXConversionError("Only .xlsx and .xls files can be converted")
+        if not safe_name.lower().endswith(".xlsx"):
+            raise XLSXConversionError("Only .xlsx workbooks can be converted")
         if not content:
             raise XLSXConversionError("XLSX file is empty")
         try:

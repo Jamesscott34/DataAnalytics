@@ -67,6 +67,40 @@ def test_business_kpis_match_raw_calculations(client: TestClient) -> None:
     assert latest.json()["result_id"] == body["result_id"]
 
 
+def test_business_kpis_repeat_customers_and_growth(client: TestClient) -> None:
+    """Business preset computes repeat customers, growth, forecast, and best service."""
+    import pytest
+
+    business_analytics_service.clear_results()
+    token = _analyst_token(client)
+    file_id = _upload(
+        client,
+        token,
+        "business-kpis.csv",
+        (
+            b"order_date,customer_id,pest_type,revenue,cost\n"
+            b"2024-01-05,CUST-1,Commercial Extermination,1000,400\n"
+            b"2024-01-20,CUST-2,Residential Treatment,500,150\n"
+            b"2024-02-03,CUST-1,Commercial Extermination,1500,600\n"
+            b"2024-02-18,CUST-3,Residential Treatment,250,80\n"
+            b"2024-03-02,CUST-1,Commercial Extermination,2000,800\n"
+        ),
+    )
+
+    response = client.post(
+        f"/api/v1/business/{file_id}/analyze",
+        headers={"Authorization": f"Bearer {token}"},
+        json={},
+    )
+    assert response.status_code == 200
+    kpis = {item["label"]: item["value"] for item in response.json()["kpis"]}
+
+    assert kpis["Repeat customers"] == 1
+    assert kpis["Month-over-month growth"] == pytest.approx(14.29, rel=1e-2)
+    assert kpis["Next month forecast"] == pytest.approx(2250.0, rel=1e-2)
+    assert kpis["Best performing service"] == "Commercial Extermination (4500.0)"
+
+
 def test_pest_control_kpis_include_operational_metrics(client: TestClient) -> None:
     """Pest control preset computes technician, pest, and forecast KPIs."""
     business_analytics_service.clear_results()

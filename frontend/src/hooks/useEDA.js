@@ -81,7 +81,6 @@ export function useEDA(fileId) {
         setSuggestions(null);
       } finally {
         setLoading(false);
-        setJobProgress(null);
       }
     },
     [fileId],

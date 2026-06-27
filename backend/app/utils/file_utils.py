@@ -73,8 +73,8 @@ def validate_workbook_filename(filename: str) -> None:
         raise FileValidationError("Path traversal is not allowed")
 
     suffixes = [suffix.lower() for suffix in Path(filename).suffixes]
-    if not suffixes or suffixes[-1] not in {".xlsx", ".xls"}:
-        raise FileValidationError("Only .xlsx and .xls files are allowed")
+    if not suffixes or suffixes[-1] != ".xlsx":
+        raise FileValidationError("Only .xlsx workbooks are allowed")
     if any(suffix in BLOCKED_EXTENSIONS for suffix in suffixes):
         raise FileValidationError("Executable or script extensions are blocked")
 

@@ -67,7 +67,7 @@ def run_eda(
                 file_id=file_id,
                 message=(
                     "Large file detected. EDA is running in the background; "
-                    "poll /jobs/{job_id} for progress."
+                    f"poll /jobs/{job.id} for progress."
                 ),
             )
             return JSONResponse(

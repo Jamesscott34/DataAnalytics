@@ -103,18 +103,37 @@ class BackgroundJobService:
             elif job.job_type == "eda":
                 from app.services.eda_service import eda_service
 
-                file_id = int(job.payload.get("file_id", 0))
+                raw_file_id = job.payload.get("file_id")
+                try:
+                    file_id = int(raw_file_id)
+                except (TypeError, ValueError) as exc:
+                    raise BackgroundJobError(
+                        "EDA job requires a valid 'file_id' integer in the payload."
+                    ) from exc
+                if file_id <= 0:
+                    raise BackgroundJobError(
+                        "EDA job requires 'file_id' to be a positive integer."
+                    )
+
                 force_refresh = bool(job.payload.get("force_refresh", False))
+
                 self._set_progress(db, job, 20)
                 if self._is_cancelled(db, job.id):
                     return self.get_job(db, job_id=job.id)
+
                 self._set_progress(db, job, 50)
+                if self._is_cancelled(db, job.id):
+                    return self.get_job(db, job_id=job.id)
+
                 response = eda_service.run_for_file(
                     db,
                     file_id=file_id,
                     force_refresh=force_refresh,
                 )
-                self._set_progress(db, job, 90)
+
+                if self._is_cancelled(db, job.id):
+                    return self.get_job(db, job_id=job.id)
+
                 self._complete(
                     db,
                     job,

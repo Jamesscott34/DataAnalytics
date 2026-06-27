@@ -29,7 +29,7 @@ class AssetsService:
         assets_dir.mkdir(parents=True, exist_ok=True)
 
         files: list[AssetFileInfo] = []
-        for pattern in ("*.csv", "*.xlsx", "*.xls"):
+        for pattern in ("*.csv", "*.xlsx"):
             for path in sorted(assets_dir.glob(pattern)):
                 if not path.is_file():
                     continue
@@ -65,7 +65,7 @@ class AssetsService:
             raise CSVUploadError(str(exc)) from exc
 
         content = asset_path.read_bytes()
-        if asset_path.suffix.lower() in {".xlsx", ".xls"}:
+        if asset_path.suffix.lower() == ".xlsx":
             try:
                 csv_name, content = xlsx_conversion_service.convert_bytes(
                     content,
