@@ -69,6 +69,9 @@ class EDAResponse(BaseModel):
     columns: list[ColumnSummary]
     quality_warnings: list[str]
     chart_data: dict[str, Any]
+    dataset_charts: dict[str, Any] = Field(default_factory=dict)
+    result_id: str | None = None
+    sampled: bool = False
     cached: bool = False
     analyzed_at: datetime
 

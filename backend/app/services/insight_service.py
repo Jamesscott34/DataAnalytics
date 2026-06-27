@@ -26,7 +26,7 @@ class InsightService:
 
     def generate(self, db: Session, payload: InsightRequest) -> InsightResponse:
         """Generate an insight using LLM config when available, otherwise fallback."""
-        context = self._result_context(payload.result_id, payload.analysis_type)
+        context = self._result_context(db, payload.result_id, payload.analysis_type)
         settings = get_settings()
         if settings.llm_api_key and settings.llm_api_base_url and settings.llm_model:
             summary = self._call_llm(context)
@@ -66,9 +66,14 @@ class InsightService:
             raise InsightError("Insight not found")
         return self._to_response(insight)
 
-    def _result_context(self, result_id: str, analysis_type: str) -> dict[str, object]:
+    def _result_context(
+        self,
+        db: Session,
+        result_id: str,
+        analysis_type: str,
+    ) -> dict[str, object]:
         try:
-            result = regression_service.get_result(result_id)
+            result = regression_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
                 "model_type": result.model_type,
@@ -81,7 +86,7 @@ class InsightService:
             pass
 
         try:
-            result = classification_service.get_result(result_id)
+            result = classification_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
                 "model_type": result.model_type,
@@ -93,7 +98,7 @@ class InsightService:
             pass
 
         try:
-            result = recommendation_service.get_result(result_id)
+            result = recommendation_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
                 "model_type": result.model_type,
@@ -106,7 +111,7 @@ class InsightService:
             pass
 
         try:
-            result = business_analytics_service.get_result(result_id)
+            result = business_analytics_service.get_result(result_id, db)
             return {
                 "analysis_type": analysis_type,
                 "model_type": "business",

@@ -4,14 +4,14 @@ Loads stored CSV files, infers column types, computes summary statistics,
 and caches results by file hash.
 """
 
-import csv
 import statistics
+import uuid
 from collections import Counter
 from datetime import UTC, datetime
-from io import StringIO
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -26,6 +26,8 @@ from app.schemas.eda import (
     TopValue,
 )
 from app.services.classification_service import MAX_DISPLAY_CLASSES
+from app.services.result_persistence_service import result_persistence_service
+from app.utils.csv_parse_utils import CSVParseError, parse_csv_rows
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import (
     coerce_float,
@@ -74,8 +76,20 @@ class EDAService:
 
         content = self._read_file_bytes(file)
         text = decode_csv_bytes(content)
-        response = self._analyze_text(text, file_hash=file.file_hash, cached=False)
+        response = self._analyze_text(
+            text,
+            file_hash=file.file_hash,
+            file_id=file_id,
+            cached=False,
+        )
         self._cache_by_hash[file.file_hash] = response
+        result_persistence_service.persist(
+            db,
+            result_id=response.result_id or f"eda:{file.file_hash}",
+            file_id=file_id,
+            result_type="eda",
+            payload=response.model_dump(mode="json"),
+        )
         return response
 
     def get_cached_for_file(self, db: Session, *, file_id: int) -> EDAResponse:
@@ -167,26 +181,21 @@ class EDAService:
         text: str,
         *,
         file_hash: str,
+        file_id: int | None = None,
         cached: bool,
     ) -> EDAResponse:
-        reader = csv.reader(StringIO(text, newline=""))
         try:
-            rows = list(reader)
-        except csv.Error as exc:
-            raise EDAError(f"Invalid CSV format: {exc}") from exc
+            headers, data_rows, parse_warnings = parse_csv_rows(text)
+        except CSVParseError as exc:
+            raise EDAError(str(exc)) from exc
 
-        if not rows or not rows[0]:
-            raise EDAError("CSV must contain a header row")
+        settings = get_settings()
+        sampled = False
+        if len(data_rows) > settings.eda_sample_max_rows:
+            data_rows = data_rows[: settings.eda_sample_max_rows]
+            sampled = True
 
-        headers = [
-            header.strip() or f"column_{index + 1}"
-            for index, header in enumerate(rows[0])
-        ]
-        data_rows = rows[1:]
         width = len(headers)
-        if any(len(row) > 0 and len(row) != width for row in data_rows):
-            raise EDAError("CSV rows must have a consistent number of columns")
-
         columns_data = [
             [row[index] if index < len(row) else "" for row in data_rows]
             for index in range(width)
@@ -207,7 +216,14 @@ class EDAService:
             duplicate_row_count=duplicate_row_count,
             row_count=len(data_rows),
         )
+        quality_warnings.extend(parse_warnings)
+        if sampled:
+            quality_warnings.append(
+                f"Large dataset sampled to first {settings.eda_sample_max_rows:,} rows for EDA"
+            )
+
         chart_data = self._chart_data(headers, columns_data, column_summaries)
+        dataset_charts = self._dataset_charts(headers, columns_data, column_summaries)
 
         return EDAResponse(
             summary=EDASummary(
@@ -221,6 +237,9 @@ class EDAService:
             columns=column_summaries,
             quality_warnings=quality_warnings,
             chart_data=chart_data,
+            dataset_charts=dataset_charts,
+            result_id=str(uuid.uuid4()),
+            sampled=sampled,
             cached=cached,
             analyzed_at=datetime.now(UTC),
         )
@@ -372,6 +391,155 @@ class EDAService:
             }
             for index, count in enumerate(counts)
         ]
+
+    def _dataset_charts(
+        self,
+        headers: list[str],
+        columns_data: list[list[str]],
+        summaries: list[ColumnSummary],
+    ) -> dict[str, Any]:
+        """Build scatter, line, and correlation charts for the dataset."""
+        charts: dict[str, Any] = {}
+        correlation = self._correlation_heatmap(headers, columns_data, summaries)
+        if correlation is not None:
+            charts["correlation"] = correlation
+        scatter = self._scatter_plots(headers, columns_data, summaries)
+        if scatter:
+            charts["scatter"] = scatter
+        line = self._line_charts(headers, columns_data, summaries)
+        if line:
+            charts["line"] = line
+        return charts
+
+    def _correlation_heatmap(
+        self,
+        headers: list[str],
+        columns_data: list[list[str]],
+        summaries: list[ColumnSummary],
+    ) -> dict[str, Any] | None:
+        numeric_columns = [
+            (header, index)
+            for header, index, summary in zip(
+                headers, range(len(headers)), summaries, strict=True
+            )
+            if summary.inferred_type in {"integer", "float"}
+        ]
+        if len(numeric_columns) < 2:
+            return None
+
+        labels = [header for header, _ in numeric_columns]
+        matrix_values: list[list[float]] = []
+        for _, index in numeric_columns:
+            values = [
+                number
+                for value in columns_data[index]
+                if (number := coerce_float(value)) is not None
+            ]
+            matrix_values.append(values)
+
+        min_len = min(len(values) for values in matrix_values)
+        if min_len < 2:
+            return None
+
+        array = np.array([values[:min_len] for values in matrix_values], dtype=float)
+        corr = np.corrcoef(array)
+        return {
+            "type": "correlation",
+            "labels": labels,
+            "matrix": [[round(float(value), 4) for value in row] for row in corr],
+        }
+
+    def _scatter_plots(
+        self,
+        headers: list[str],
+        columns_data: list[list[str]],
+        summaries: list[ColumnSummary],
+    ) -> list[dict[str, Any]]:
+        numeric_columns = [
+            (header, index)
+            for header, index, summary in zip(
+                headers, range(len(headers)), summaries, strict=True
+            )
+            if summary.inferred_type in {"integer", "float"}
+        ]
+        plots: list[dict[str, Any]] = []
+        max_points = 200
+        for left_index in range(min(len(numeric_columns), 3)):
+            for right_index in range(left_index + 1, min(len(numeric_columns), 4)):
+                x_header, x_index = numeric_columns[left_index]
+                y_header, y_index = numeric_columns[right_index]
+                points: list[dict[str, float]] = []
+                for row_index in range(len(columns_data[0])):
+                    x_value = coerce_float(columns_data[x_index][row_index])
+                    y_value = coerce_float(columns_data[y_index][row_index])
+                    if x_value is None or y_value is None:
+                        continue
+                    points.append({"x": float(x_value), "y": float(y_value)})
+                    if len(points) >= max_points:
+                        break
+                if len(points) >= 2:
+                    plots.append(
+                        {
+                            "type": "scatter",
+                            "x_column": x_header,
+                            "y_column": y_header,
+                            "points": points,
+                        }
+                    )
+                if len(plots) >= 3:
+                    return plots
+        return plots
+
+    def _line_charts(
+        self,
+        headers: list[str],
+        columns_data: list[list[str]],
+        summaries: list[ColumnSummary],
+    ) -> list[dict[str, Any]]:
+        from app.utils.type_utils import parse_datetime_value
+
+        date_columns = [
+            (header, index)
+            for header, index, summary in zip(
+                headers, range(len(headers)), summaries, strict=True
+            )
+            if summary.inferred_type == "datetime"
+        ]
+        numeric_columns = [
+            (header, index)
+            for header, index, summary in zip(
+                headers, range(len(headers)), summaries, strict=True
+            )
+            if summary.inferred_type in {"integer", "float"}
+        ]
+        if not date_columns or not numeric_columns:
+            return []
+
+        charts: list[dict[str, Any]] = []
+        date_header, date_index = date_columns[0]
+        for value_header, value_index in numeric_columns[:2]:
+            series: dict[str, float] = {}
+            for row_index in range(len(columns_data[0])):
+                label = parse_datetime_value(columns_data[date_index][row_index])
+                value = coerce_float(columns_data[value_index][row_index])
+                if label is None or value is None:
+                    continue
+                key = label.strftime("%Y-%m-%d")
+                series[key] = series.get(key, 0.0) + float(value)
+            if len(series) >= 2:
+                points = [
+                    {"x": label, "y": round(amount, 4)}
+                    for label, amount in sorted(series.items())
+                ][:200]
+                charts.append(
+                    {
+                        "type": "line",
+                        "x_column": date_header,
+                        "y_column": value_header,
+                        "points": points,
+                    }
+                )
+        return charts
 
 
 eda_service = EDAService()

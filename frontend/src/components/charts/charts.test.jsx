@@ -7,6 +7,9 @@ import { MissingValuesChart } from './MissingValuesChart.jsx';
 import { ConfusionMatrixChart } from './ConfusionMatrixChart.jsx';
 import { ResidualChart } from './ResidualChart.jsx';
 import { TopPairsChart } from './TopPairsChart.jsx';
+import { CorrelationHeatmap } from './CorrelationHeatmap.jsx';
+import { LineChart } from './LineChart.jsx';
+import { ScatterChart } from './ScatterChart.jsx';
 import { TrendBarChart } from './TrendBarChart.jsx';
 import { EDADashboard } from '../EDADashboard.jsx';
 
@@ -78,7 +81,9 @@ describe('MissingValuesChart', () => {
 describe('Result charts', () => {
   it('renders residual magnitudes', () => {
     render(<ResidualChart residuals={[0.2, -1.4]} />);
-    expect(screen.getByLabelText('Bar chart for Residual magnitude')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Bar chart for Residual magnitude'),
+    ).toBeInTheDocument();
   });
 
   it('renders confusion matrix heatmap', () => {
@@ -103,6 +108,51 @@ describe('Result charts', () => {
     render(<TrendBarChart points={[{ label: 'Jan', value: 120 }]} />);
     expect(screen.getByLabelText('Bar chart for Trend')).toBeInTheDocument();
   });
+
+  it('renders scatter plot', () => {
+    render(
+      <ScatterChart
+        title="revenue vs cost"
+        xColumn="revenue"
+        yColumn="cost"
+        points={[
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ]}
+      />,
+    );
+    expect(
+      screen.getByLabelText('Scatter plot for revenue vs cost'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders EDA line chart', () => {
+    render(
+      <LineChart
+        title="Revenue trend"
+        xColumn="date"
+        yColumn="revenue"
+        points={[
+          { x: '2024-01-01', y: 100 },
+          { x: '2024-02-01', y: 120 },
+        ]}
+      />,
+    );
+    expect(screen.getByLabelText('Line chart for Revenue trend')).toBeInTheDocument();
+  });
+
+  it('renders correlation heatmap', () => {
+    render(
+      <CorrelationHeatmap
+        labels={['a', 'b']}
+        matrix={[
+          [1, 0.5],
+          [0.5, 1],
+        ]}
+      />,
+    );
+    expect(screen.getByLabelText('Correlation heatmap')).toBeInTheDocument();
+  });
 });
 
 describe('EDADashboard', () => {
@@ -126,7 +176,15 @@ describe('EDADashboard', () => {
               missing_percent: 0,
               unique_count: 8,
               sample_values: ['1', '2'],
-              numeric_stats: { min: 1, max: 10, mean: 5, median: 5, std: 2, q25: 3, q75: 7 },
+              numeric_stats: {
+                min: 1,
+                max: 10,
+                mean: 5,
+                median: 5,
+                std: 2,
+                q25: 3,
+                q75: 7,
+              },
             },
           ],
           quality_warnings: ['Column notes has high missing rate'],

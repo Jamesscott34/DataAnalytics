@@ -45,11 +45,12 @@ def analyze_business(
 )
 def get_business_kpis(
     file_id: int,
+    db: Annotated[Session, Depends(get_db)],
     _: Annotated[User, Depends(require_viewer)],
 ) -> BusinessReport:
     """Return the latest KPI report for a file."""
     try:
-        return business_analytics_service.get_latest_for_file(file_id)
+        return business_analytics_service.get_latest_for_file(file_id, db)
     except BusinessAnalyticsError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

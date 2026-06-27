@@ -1,5 +1,8 @@
 import { ColumnChart } from './charts/ColumnChart.jsx';
+import { CorrelationHeatmap } from './charts/CorrelationHeatmap.jsx';
+import { LineChart } from './charts/LineChart.jsx';
 import { MissingValuesChart } from './charts/MissingValuesChart.jsx';
+import { ScatterChart } from './charts/ScatterChart.jsx';
 
 /**
  * EDADashboard
@@ -11,7 +14,13 @@ export function EDADashboard({ eda, suggestions }) {
     return null;
   }
 
-  const { summary, columns, quality_warnings: warnings, chart_data: chartData } = eda;
+  const {
+    summary,
+    columns,
+    quality_warnings: warnings,
+    chart_data: chartData,
+    dataset_charts: datasetCharts,
+  } = eda;
   const chartColumns = Object.keys(chartData ?? {});
 
   return (
@@ -40,6 +49,12 @@ export function EDADashboard({ eda, suggestions }) {
       {eda.cached && (
         <p className="eda-cache-note" role="status">
           Showing cached analysis from {new Date(eda.analyzed_at).toLocaleString()}.
+        </p>
+      )}
+
+      {eda.sampled && (
+        <p className="eda-cache-note" role="status">
+          Large dataset: analysis used a row sample for performance.
         </p>
       )}
 
@@ -111,6 +126,30 @@ export function EDADashboard({ eda, suggestions }) {
         <h2>Charts</h2>
         <div className="chart-grid">
           <MissingValuesChart columns={columns} />
+          {datasetCharts?.correlation && (
+            <CorrelationHeatmap
+              labels={datasetCharts.correlation.labels}
+              matrix={datasetCharts.correlation.matrix}
+            />
+          )}
+          {datasetCharts?.scatter?.map((chart) => (
+            <ScatterChart
+              key={`${chart.x_column}-${chart.y_column}`}
+              title={`${chart.x_column} vs ${chart.y_column}`}
+              xColumn={chart.x_column}
+              yColumn={chart.y_column}
+              points={chart.points}
+            />
+          ))}
+          {datasetCharts?.line?.map((chart) => (
+            <LineChart
+              key={`${chart.x_column}-${chart.y_column}`}
+              title={`${chart.y_column} over ${chart.x_column}`}
+              xColumn={chart.x_column}
+              yColumn={chart.y_column}
+              points={chart.points}
+            />
+          ))}
           {chartColumns.map((columnName) => (
             <ColumnChart
               key={columnName}

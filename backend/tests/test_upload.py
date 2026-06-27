@@ -107,9 +107,9 @@ def test_oversized_file_blocked(client: TestClient, monkeypatch) -> None:
 
 
 def test_invalid_csv_format_returns_400(client: TestClient) -> None:
-    """Malformed CSV parser errors are converted to client errors."""
+    """CSV files without a header row are rejected."""
     token = _analyst_token(client)
-    response = _upload(client, token, "bad-newline.csv", b'a,b\n"broken\n1,2\n')
+    response = _upload(client, token, "no-header.csv", b"\n")
     assert response.status_code == 400
     assert response.json()["message"]
 
@@ -163,18 +163,34 @@ def test_duplicate_replace_action(client: TestClient) -> None:
     assert second.json()["filename"] == "replace-me-new.csv"
 
 
-def test_delete_upload_removes_file(client: TestClient) -> None:
-    """Analysts can delete their own uploaded files."""
-    token = _analyst_token(client)
+def test_delete_upload_requires_admin(client: TestClient) -> None:
+    """Only administrators may delete uploaded files."""
+    analyst_token = _analyst_token(client)
     content = b"name,value\ndelta,4\n"
-    uploaded = _upload(client, token, "delete-me.csv", content)
+    uploaded = _upload(client, analyst_token, "delete-me.csv", content)
     file_id = uploaded.json()["file_id"]
-    response = client.delete(
+    denied = client.delete(
         f"/api/v1/uploads/{file_id}",
-        headers=_headers(token),
+        headers=_headers(analyst_token),
     )
-    assert response.status_code == 200
-    assert response.json()["message"] == "Uploaded file deleted"
+    assert denied.status_code == 403
+
+    admin_email = "upload-admin@example.com"
+    client.post(
+        "/api/v1/auth/register",
+        json={"email": admin_email, "password": "password123", "role": "admin"},
+    )
+    admin_login = client.post(
+        "/api/v1/auth/login",
+        json={"email": admin_email, "password": "password123"},
+    )
+    admin_token = admin_login.json()["access_token"]
+    allowed = client.delete(
+        f"/api/v1/uploads/{file_id}",
+        headers=_headers(admin_token),
+    )
+    assert allowed.status_code == 200
+    assert allowed.json()["message"] == "Uploaded file deleted"
 
 
 def test_client_hash_match_recorded(client: TestClient) -> None:

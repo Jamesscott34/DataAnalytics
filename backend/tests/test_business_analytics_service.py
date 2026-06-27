@@ -67,6 +67,39 @@ def test_business_kpis_match_raw_calculations(client: TestClient) -> None:
     assert latest.json()["result_id"] == body["result_id"]
 
 
+def test_pest_control_kpis_include_operational_metrics(client: TestClient) -> None:
+    """Pest control preset computes technician, pest, and forecast KPIs."""
+    business_analytics_service.clear_results()
+    token = _analyst_token(client)
+    file_id = _upload(
+        client,
+        token,
+        "pest-kpis.csv",
+        (
+            b"job_date,customer_region,pest_type,technician,revenue,cost\n"
+            b"2024-01-03,North,Rodent,Avery,240,95\n"
+            b"2024-01-08,South,Ants,Blake,180,70\n"
+            b"2024-02-02,West,Rodent,Avery,260,105\n"
+            b"2024-02-14,North,Wasps,Devon,310,120\n"
+        ),
+    )
+    response = client.post(
+        f"/api/v1/business/{file_id}/analyze",
+        headers={"Authorization": f"Bearer {token}"},
+        json={},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    labels = {item["label"] for item in body["kpis"]}
+    assert "Total jobs" in labels
+    assert "January sales" in labels
+    assert "Busiest month" in labels
+    assert body["jobs_by_technician"]
+    assert body["jobs_by_pest"]
+    assert body["jobs_by_location"]
+    assert body["yearly_revenue"]
+
+
 def test_business_unsuitable_dataset_message(client: TestClient) -> None:
     """Datasets without revenue-like columns return a helpful note."""
     business_analytics_service.clear_results()

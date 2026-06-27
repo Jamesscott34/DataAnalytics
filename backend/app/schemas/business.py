@@ -9,6 +9,11 @@ class BusinessAnalyticsRequest(BaseModel):
     date_column: str | None = None
     revenue_column: str | None = None
     cost_column: str | None = None
+    technician_column: str | None = None
+    pest_column: str | None = None
+    location_column: str | None = None
+    customer_column: str | None = None
+    service_column: str | None = None
 
 
 class KPICard(BaseModel):
@@ -38,4 +43,9 @@ class BusinessReport(BaseModel):
     date_column: str | None
     kpis: list[KPICard]
     revenue_by_month: list[BusinessChartPoint]
+    yearly_revenue: list[BusinessChartPoint] = []
+    sales_by_month_named: list[BusinessChartPoint] = []
+    jobs_by_technician: list[BusinessChartPoint] = []
+    jobs_by_pest: list[BusinessChartPoint] = []
+    jobs_by_location: list[BusinessChartPoint] = []
     suitability_note: str

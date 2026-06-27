@@ -26,6 +26,7 @@ from app.services.plugin_registry import (
     get_timeseries_algorithm,
     register_timeseries_algorithm,
 )
+from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import coerce_float, is_missing, normalize_cell, parse_datetime_value
 
@@ -128,12 +129,22 @@ class TimeseriesService:
             history=history,
             forecast=forecast_points,
         )
-        self._results[result.result_id] = result
-        return result
+        return result_persistence_service.save_model(
+            db,
+            self._results,
+            result,
+            result_type="timeseries",
+            algorithm=request.algorithm,
+        )
 
-    def get_result(self, result_id: str) -> TimeseriesResult:
+    def get_result(self, result_id: str, db: Session | None = None) -> TimeseriesResult:
         """Return a stored time series result."""
-        result = self._results.get(result_id)
+        result = result_persistence_service.load_model(
+            db,
+            self._results,
+            result_id,
+            TimeseriesResult,
+        )
         if result is None:
             raise TimeseriesError("Time series result not found")
         return result

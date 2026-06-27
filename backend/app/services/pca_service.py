@@ -19,6 +19,7 @@ from app.schemas.models import (
     PCARequest,
     PCAResult,
 )
+from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import coerce_float, is_missing, normalize_cell
 
@@ -97,12 +98,21 @@ class PCAService:
             components=components,
             projections=projections,
         )
-        self._results[result.result_id] = result
-        return result
+        return result_persistence_service.save_model(
+            db,
+            self._results,
+            result,
+            result_type="pca",
+        )
 
-    def get_result(self, result_id: str) -> PCAResult:
+    def get_result(self, result_id: str, db: Session | None = None) -> PCAResult:
         """Return a stored PCA result."""
-        result = self._results.get(result_id)
+        result = result_persistence_service.load_model(
+            db,
+            self._results,
+            result_id,
+            PCAResult,
+        )
         if result is None:
             raise PCAError("PCA result not found")
         return result

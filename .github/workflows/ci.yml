@@ -22,6 +22,10 @@ jobs:
           python -m venv .venv
           .venv/bin/pip install --upgrade pip
           .venv/bin/pip install -r requirements-dev.txt
+      - name: Black
+        run: .venv/bin/black --check app/ tests/
+      - name: isort
+        run: .venv/bin/isort --check-only app/ tests/
       - name: Pytest with service coverage
         run: .venv/bin/pytest -q --cov=app/services --cov-report=term --cov-fail-under=80
 
@@ -39,6 +43,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Prettier (changed chart components)
+        run: npx prettier --check "src/components/charts/**/*.{js,jsx}" "src/components/EDADashboard.jsx" "src/pages/BusinessDashboardPage.jsx"
       - name: Lint
         run: npm run lint
       - name: Test

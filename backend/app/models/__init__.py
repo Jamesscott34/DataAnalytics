@@ -9,6 +9,7 @@ from app.models.csv_data import CsvData
 from app.models.dataset_group import DatasetGroup, DatasetGroupMember
 from app.models.file_version import FileVersion
 from app.models.generated_insight import GeneratedInsight
+from app.models.model_result import ModelResult
 from app.models.security_scan import SecurityScan
 from app.models.uploaded_file import UploadedFile
 from app.models.user import User
@@ -22,6 +23,7 @@ __all__ = [
     "DatasetGroupMember",
     "FileVersion",
     "GeneratedInsight",
+    "ModelResult",
     "SecurityScan",
     "UploadedFile",
     "User",

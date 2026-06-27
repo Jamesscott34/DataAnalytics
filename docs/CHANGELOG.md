@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `model_results` SQL table (migration `010_model_results`) with persistence for EDA, ML, and business analytics outputs.
+- EDA dataset charts: scatter plots, line charts, and correlation heatmaps (backend + React components).
+- Expanded pest-control business KPIs: yearly revenue, January sales, technician/pest/location breakdowns, repeat customers, MoM growth, next-month forecast.
+- Ragged CSV / market-basket parsing with column padding for variable-width transaction rows.
+- EDA row sampling for large files (`EDA_SAMPLE_MAX_ROWS` config).
+- CI: Black, isort, and scoped Prettier checks for chart components.
+
+### Changed
+
+- File deletion restricted to administrators only (aligns with course RBAC rubric).
+- Business and model `get_result` endpoints reload results from SQL when in-memory cache is cleared.
+
+### Added (prior)
+
 - Phase 0 planning documents: architecture, API design, database schema, component tree, task list.
 - FastAPI backend with `/api/v1/health` liveness endpoint.
 - React Vite frontend shell with health status panel and Vitest tests.

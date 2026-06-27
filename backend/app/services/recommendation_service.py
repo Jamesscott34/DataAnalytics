@@ -16,6 +16,7 @@ from app.schemas.models import (
     SimilarityResult,
     SimilarityTopPair,
 )
+from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import coerce_float, is_missing, normalize_cell
 
@@ -46,8 +47,12 @@ class RecommendationService:
         prepared = self._load_numeric_matrix(file, request)
         if not prepared.suitable:
             result = self._unsuitable_result(file_id, request, prepared.note)
-            self._results[result.result_id] = result
-            return result
+            return result_persistence_service.save_model(
+                db,
+                self._results,
+                result,
+                result_type="similarity",
+            )
 
         labels = prepared.labels
         matrix = prepared.matrix
@@ -80,12 +85,21 @@ class RecommendationService:
                 "similar rows or items."
             ),
         )
-        self._results[result.result_id] = result
-        return result
+        return result_persistence_service.save_model(
+            db,
+            self._results,
+            result,
+            result_type="similarity",
+        )
 
-    def get_result(self, result_id: str) -> SimilarityResult:
+    def get_result(self, result_id: str, db: Session | None = None) -> SimilarityResult:
         """Return a stored similarity result."""
-        result = self._results.get(result_id)
+        result = result_persistence_service.load_model(
+            db,
+            self._results,
+            result_id,
+            SimilarityResult,
+        )
         if result is None:
             raise RecommendationError("Similarity result not found")
         return result

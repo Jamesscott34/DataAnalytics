@@ -36,6 +36,7 @@ from app.services.plugin_registry import (
     get_regression_algorithm,
     register_regression_algorithm,
 )
+from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import coerce_float, is_missing, normalize_cell
 
@@ -130,12 +131,22 @@ class RegressionService:
             feature_importance=importance,
             explainability=explainability,
         )
-        self._results[result.result_id] = result
-        return result
+        return result_persistence_service.save_model(
+            db,
+            self._results,
+            result,
+            result_type="regression",
+            algorithm=request.algorithm,
+        )
 
-    def get_result(self, result_id: str) -> RegressionResult:
+    def get_result(self, result_id: str, db: Session | None = None) -> RegressionResult:
         """Return a stored regression result."""
-        result = self._results.get(result_id)
+        result = result_persistence_service.load_model(
+            db,
+            self._results,
+            result_id,
+            RegressionResult,
+        )
         if result is None:
             raise RegressionError("Regression result not found")
         return result

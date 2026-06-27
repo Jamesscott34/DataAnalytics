@@ -214,6 +214,7 @@ def run_similarity(
 def get_model_result(
     result_id: str,
     _: Annotated[User, Depends(require_viewer)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> (
     RegressionResult
     | ClassificationResult
@@ -224,27 +225,27 @@ def get_model_result(
 ):
     """Return a previously trained model or analysis result."""
     try:
-        return regression_service.get_result(result_id)
+        return regression_service.get_result(result_id, db)
     except RegressionError:
         pass
     try:
-        return classification_service.get_result(result_id)
+        return classification_service.get_result(result_id, db)
     except ClassificationError:
         pass
     try:
-        return clustering_service.get_result(result_id)
+        return clustering_service.get_result(result_id, db)
     except ClusteringError:
         pass
     try:
-        return pca_service.get_result(result_id)
+        return pca_service.get_result(result_id, db)
     except PCAError:
         pass
     try:
-        return timeseries_service.get_result(result_id)
+        return timeseries_service.get_result(result_id, db)
     except TimeseriesError:
         pass
     try:
-        return recommendation_service.get_result(result_id)
+        return recommendation_service.get_result(result_id, db)
     except RecommendationError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

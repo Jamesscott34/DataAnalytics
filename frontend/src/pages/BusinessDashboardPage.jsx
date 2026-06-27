@@ -35,7 +35,9 @@ export function BusinessDashboardPage() {
       <main className="page-shell page-shell--wide">
         <header className="page-header">
           <h1>Business analytics</h1>
-          <p className="page-lead">Choose a dataset to calculate revenue and margin KPIs.</p>
+          <p className="page-lead">
+            Choose a dataset to calculate revenue and margin KPIs.
+          </p>
         </header>
         <DatasetFilePicker
           title="Choose a dataset for business analytics"
@@ -52,7 +54,9 @@ export function BusinessDashboardPage() {
     <main className="page-shell page-shell--wide">
       <header className="page-header">
         <h1>Business analytics</h1>
-        <p className="page-lead">Map revenue, cost, and date columns to calculate KPIs.</p>
+        <p className="page-lead">
+          Map revenue, cost, and date columns to calculate KPIs.
+        </p>
       </header>
       <DatasetFileToolbar
         fileId={fileId}
@@ -85,21 +89,27 @@ export function BusinessDashboardPage() {
               name="date_column"
               columns={columns}
               value={mapping.dateColumn}
-              onChange={(dateColumn) => setMapping((current) => ({ ...current, dateColumn }))}
+              onChange={(dateColumn) =>
+                setMapping((current) => ({ ...current, dateColumn }))
+              }
             />
             <ColumnSelect
               label="Revenue column"
               name="revenue_column"
               columns={columns}
               value={mapping.revenueColumn}
-              onChange={(revenueColumn) => setMapping((current) => ({ ...current, revenueColumn }))}
+              onChange={(revenueColumn) =>
+                setMapping((current) => ({ ...current, revenueColumn }))
+              }
             />
             <ColumnSelect
               label="Cost column"
               name="cost_column"
               columns={columns}
               value={mapping.costColumn}
-              onChange={(costColumn) => setMapping((current) => ({ ...current, costColumn }))}
+              onChange={(costColumn) =>
+                setMapping((current) => ({ ...current, costColumn }))
+              }
             />
             <button className="primary-button" type="submit" disabled={loading}>
               {loading ? 'Analyzing…' : 'Calculate KPIs'}
@@ -115,7 +125,10 @@ export function BusinessDashboardPage() {
 
       {report && (
         <section className="panel-card">
-          <p className={report.kpis.length ? 'upload-help' : 'form-error'} role="status">
+          <p
+            className={report.kpis.length ? 'upload-help' : 'form-error'}
+            role="status"
+          >
             {report.suitability_note}
           </p>
           <div className="eda-summary-grid">
@@ -126,7 +139,10 @@ export function BusinessDashboardPage() {
           <InsightsPanel resultId={report.result_id} analysisType="business" />
           {report.revenue_by_month.length > 0 && (
             <>
-              <TrendBarChart points={report.revenue_by_month} title="Revenue by month" />
+              <TrendBarChart
+                points={report.revenue_by_month}
+                title="Revenue by month"
+              />
               <h2>Revenue by month</h2>
               <ul className="file-list">
                 {report.revenue_by_month.map((point) => (
@@ -136,6 +152,27 @@ export function BusinessDashboardPage() {
                 ))}
               </ul>
             </>
+          )}
+          {report.yearly_revenue?.length > 0 && (
+            <TrendBarChart points={report.yearly_revenue} title="Yearly revenue" />
+          )}
+          {report.sales_by_month_named?.length > 0 && (
+            <TrendBarChart
+              points={report.sales_by_month_named}
+              title="Sales by month"
+            />
+          )}
+          {report.jobs_by_technician?.length > 0 && (
+            <TrendBarChart
+              points={report.jobs_by_technician}
+              title="Jobs by technician"
+            />
+          )}
+          {report.jobs_by_pest?.length > 0 && (
+            <TrendBarChart points={report.jobs_by_pest} title="Jobs by pest type" />
+          )}
+          {report.jobs_by_location?.length > 0 && (
+            <TrendBarChart points={report.jobs_by_location} title="Jobs by location" />
           )}
         </section>
       )}

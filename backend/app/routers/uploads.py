@@ -142,10 +142,10 @@ def compare_file_versions(
 def delete_upload(
     file_id: int,
     request: Request,
-    current_user: Annotated[User, Depends(require_analyst)],
+    current_user: Annotated[User, Depends(require_admin)],
     db: Annotated[Session, Depends(get_db)],
 ) -> dict[str, str]:
-    """Delete an uploaded file. Analysts may delete their own uploads."""
+    """Delete an uploaded file (admin only)."""
     try:
         csv_service.delete_upload(
             db,

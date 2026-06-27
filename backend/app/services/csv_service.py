@@ -18,6 +18,7 @@ from app.schemas.upload import ScanResult, UploadMetadata, UploadResponse
 from app.services.audit_service import audit_service
 from app.services.dataset_version_service import dataset_version_service
 from app.services.security_scan_service import security_scan_service
+from app.utils.csv_parse_utils import CSVParseError, parse_csv_rows
 from app.utils.encoding_utils import EncodingValidationError, decode_csv_bytes
 from app.utils.file_utils import (
     FileValidationError,
@@ -253,15 +254,12 @@ class CSVService:
         user: User,
         ip_address: str | None = None,
     ) -> None:
-        """Delete an uploaded file record and its stored bytes.
-
-        Analysts may delete their own uploads. Admins may delete any upload.
-        """
+        """Delete an uploaded file record and its stored bytes (admin only)."""
+        if user.role != UserRole.ADMIN:
+            raise CSVUploadError("Only administrators may delete uploaded files")
         record = db.get(UploadedFile, file_id)
         if record is None:
             raise CSVUploadError("Uploaded file not found")
-        if user.role != UserRole.ADMIN and record.owner_id != user.id:
-            raise CSVUploadError("You do not have permission to delete this file")
         audit_service.record(
             db,
             event_type="upload",
@@ -350,18 +348,11 @@ class CSVService:
 
     def _summarize_csv(self, text: str) -> CSVSummary:
         """Parse CSV text and return row/column counts."""
-        reader = csv.reader(StringIO(text, newline=""))
         try:
-            rows = list(reader)
-        except csv.Error as exc:
-            raise CSVUploadError(f"Invalid CSV format: {exc}") from exc
-        if not rows or not rows[0]:
-            raise CSVUploadError("CSV must contain a header row")
-        header_width = len(rows[0])
-        data_rows = rows[1:]
-        if any(len(row) > 0 and len(row) != header_width for row in data_rows):
-            raise CSVUploadError("CSV rows must have a consistent number of columns")
-        return CSVSummary(row_count=len(data_rows), column_count=header_width)
+            headers, data_rows, _ = parse_csv_rows(text)
+        except CSVParseError as exc:
+            raise CSVUploadError(str(exc)) from exc
+        return CSVSummary(row_count=len(data_rows), column_count=len(headers))
 
     def _store_file(
         self,

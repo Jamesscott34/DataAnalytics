@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     scan_results_dir: str = Field(default="../scan_results", alias="SCAN_RESULTS_DIR")
     max_upload_size_mb: int = Field(default=250, alias="MAX_UPLOAD_SIZE_MB")
     large_file_warning_mb: int = Field(default=50, alias="LARGE_FILE_WARNING_MB")
+    eda_sample_max_rows: int = Field(default=100_000, alias="EDA_SAMPLE_MAX_ROWS")
     temp_assets_dir: str = Field(default="../temp_assets", alias="TEMP_ASSETS_DIR")
     assets_dir: str = Field(default="../assets", alias="ASSETS_DIR")
     asset_manifest_path: str = Field(
