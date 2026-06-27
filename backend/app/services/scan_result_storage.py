@@ -37,10 +37,14 @@ class ScanResultStorage:
         date_str = datetime.now(UTC).strftime("%d-%m-%y")
         return f"{cleaned}_Analytics_{date_str}.{extension.lstrip('.')}"
 
-    def save_bytes(self, *, content: bytes, original_filename: str, extension: str) -> SavedScanResult:
+    def save_bytes(
+        self, *, content: bytes, original_filename: str, extension: str
+    ) -> SavedScanResult:
         """Write binary content (PDF) to scan_results."""
         self.ensure_directory()
-        filename = self._unique_filename(self.build_filename(original_filename, extension))
+        filename = self._unique_filename(
+            self.build_filename(original_filename, extension)
+        )
         path = self._root / filename
         path.write_bytes(content)
         return self._to_metadata(path, format_label="pdf")
@@ -54,10 +58,14 @@ class ScanResultStorage:
     ) -> SavedScanResult:
         """Write text content to scan_results."""
         self.ensure_directory()
-        filename = self._unique_filename(self.build_filename(original_filename, extension))
+        filename = self._unique_filename(
+            self.build_filename(original_filename, extension)
+        )
         path = self._root / filename
         path.write_text(content, encoding="utf-8")
-        return self._to_metadata(path, format_label=self._format_for_suffix(path.suffix))
+        return self._to_metadata(
+            path, format_label=self._format_for_suffix(path.suffix)
+        )
 
     def list_results(self) -> list[SavedScanResult]:
         """List saved scan result files newest first."""
@@ -65,7 +73,8 @@ class ScanResultStorage:
         files = [
             path
             for path in self._root.iterdir()
-            if path.is_file() and path.suffix.lower() in {".md", ".pdf", ".json", ".csv"}
+            if path.is_file()
+            and path.suffix.lower() in {".md", ".pdf", ".json", ".csv"}
         ]
         files.sort(key=lambda path: path.stat().st_mtime, reverse=True)
         return [self._to_metadata(path) for path in files]
@@ -107,7 +116,9 @@ class ScanResultStorage:
             counter += 1
         return f"{stem}-{counter}{suffix}"
 
-    def _to_metadata(self, path: Path, format_label: str | None = None) -> SavedScanResult:
+    def _to_metadata(
+        self, path: Path, format_label: str | None = None
+    ) -> SavedScanResult:
         suffix = path.suffix.lower()
         resolved_format = format_label or self._format_for_suffix(suffix)
         stat = path.stat()

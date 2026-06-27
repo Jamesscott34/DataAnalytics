@@ -151,7 +151,9 @@ class RecommendationService:
             numeric_values = [coerce_float(value) for value in values]
             if any(value is None for value in numeric_values):
                 continue
-            numeric_rows.append([float(value) for value in numeric_values if value is not None])
+            numeric_rows.append(
+                [float(value) for value in numeric_values if value is not None]
+            )
             if id_index is not None:
                 label = normalize_cell(row[id_index]) or f"row {row_index}"
             else:

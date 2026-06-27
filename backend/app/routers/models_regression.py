@@ -194,7 +194,9 @@ def run_similarity(
 ) -> SimilarityResult:
     """Compute cosine similarity for rows or selected feature columns."""
     try:
-        return recommendation_service.run_similarity(db, file_id=file_id, request=request)
+        return recommendation_service.run_similarity(
+            db, file_id=file_id, request=request
+        )
     except RecommendationError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

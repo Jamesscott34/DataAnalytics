@@ -48,7 +48,9 @@ class BackgroundJobService:
             ).start()
         return self.to_schema(job)
 
-    def list_jobs(self, db: Session, *, owner_id: int | None, limit: int = 20) -> list[JobResponse]:
+    def list_jobs(
+        self, db: Session, *, owner_id: int | None, limit: int = 20
+    ) -> list[JobResponse]:
         """Return recent jobs for the current user."""
         query = db.query(AnalysisJob)
         if owner_id is not None:
@@ -56,12 +58,16 @@ class BackgroundJobService:
         jobs = query.order_by(AnalysisJob.created_at.desc()).limit(limit).all()
         return [self.to_schema(job) for job in jobs]
 
-    def get_job(self, db: Session, *, job_id: str, owner_id: int | None = None) -> JobResponse:
+    def get_job(
+        self, db: Session, *, job_id: str, owner_id: int | None = None
+    ) -> JobResponse:
         """Return a job by id."""
         job = self._get_job(db, job_id=job_id, owner_id=owner_id)
         return self.to_schema(job)
 
-    def cancel(self, db: Session, *, job_id: str, owner_id: int | None = None) -> JobResponse:
+    def cancel(
+        self, db: Session, *, job_id: str, owner_id: int | None = None
+    ) -> JobResponse:
         """Cancel a queued or running job."""
         job = self._get_job(db, job_id=job_id, owner_id=owner_id)
         if job.status in {JobStatus.COMPLETE, JobStatus.FAILED, JobStatus.CANCELLED}:
@@ -121,7 +127,9 @@ class BackgroundJobService:
                     },
                 )
             elif job.job_type == "fail":
-                raise BackgroundJobError(str(job.payload.get("message") or "Job failed"))
+                raise BackgroundJobError(
+                    str(job.payload.get("message") or "Job failed")
+                )
             else:
                 self._set_progress(db, job, 50)
                 self._complete(db, job, result={"message": "Demo job complete"})

@@ -61,10 +61,7 @@ def list_plugin_specs() -> list[PluginInfo]:
 def list_plugins(db: Session, *, file_id: int | None = None) -> list[PluginInfo]:
     """Return plugins with applicability when file_id is provided."""
     profile = _column_profile(db, file_id) if file_id is not None else None
-    return [
-        _plugin_info(spec, profile)
-        for spec in ANALYTICS_PLUGINS.values()
-    ]
+    return [_plugin_info(spec, profile) for spec in ANALYTICS_PLUGINS.values()]
 
 
 def get_plugin(name: str) -> AnalyticsPluginSpec:
@@ -164,14 +161,19 @@ def _load_columns(db: Session, file_id: int) -> list[str]:
     return list(_load_frame(db, file_id).columns)
 
 
-def _column_profile(db: Session, file_id: int) -> tuple[list[str], list[str], list[str]]:
+def _column_profile(
+    db: Session, file_id: int
+) -> tuple[list[str], list[str], list[str]]:
     frame = _load_frame(db, file_id)
     numeric = list(frame.select_dtypes(include="number").columns)
     labels = [
         column
         for column in frame.columns
         if column not in numeric
-        and (any(hint in column.lower() for hint in _LABEL_HINTS) or frame[column].nunique() <= 12)
+        and (
+            any(hint in column.lower() for hint in _LABEL_HINTS)
+            or frame[column].nunique() <= 12
+        )
     ]
     dates = [
         column
@@ -185,7 +187,9 @@ _DATE_HINTS = {"date", "time", "month", "year", "period", "day"}
 _LABEL_HINTS = {"label", "churn", "fraud", "class", "target", "status", "category"}
 
 
-def _run_anomaly(db: Session, file_id: int, params: dict[str, Any]) -> PluginRunResponse:
+def _run_anomaly(
+    db: Session, file_id: int, params: dict[str, Any]
+) -> PluginRunResponse:
     frame = _load_frame(db, file_id)
     numeric = frame.select_dtypes(include="number")
     if numeric.empty:
@@ -207,7 +211,9 @@ def _run_churn(db: Session, file_id: int, params: dict[str, Any]) -> PluginRunRe
     label_col = params.get("label_column") or _pick_label(frame)
     if label_col is None:
         raise PluginError("No label column found for churn analysis")
-    features = frame.select_dtypes(include="number").drop(columns=[label_col], errors="ignore")
+    features = frame.select_dtypes(include="number").drop(
+        columns=[label_col], errors="ignore"
+    )
     if features.shape[1] == 0:
         raise PluginError("No numeric feature columns for churn model")
     y = frame[label_col].astype(str)
@@ -244,7 +250,11 @@ def _run_fraud(db: Session, file_id: int, params: dict[str, Any]) -> PluginRunRe
 def _run_demand(db: Session, file_id: int, params: dict[str, Any]) -> PluginRunResponse:
     frame = _load_frame(db, file_id)
     date_col = params.get("date_column") or next(
-        (column for column in frame.columns if any(h in column.lower() for h in _DATE_HINTS)),
+        (
+            column
+            for column in frame.columns
+            if any(h in column.lower() for h in _DATE_HINTS)
+        ),
         None,
     )
     value_col = params.get("value_column") or next(

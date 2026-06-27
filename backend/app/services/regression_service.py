@@ -295,9 +295,7 @@ class RegressionService:
                     feature_names.append(f"{name}={category}")
 
         features = (
-            np.hstack(feature_blocks)
-            if len(feature_blocks) > 1
-            else feature_blocks[0]
+            np.hstack(feature_blocks) if len(feature_blocks) > 1 else feature_blocks[0]
         )
         target = np.array(target_values, dtype=float)
 
@@ -328,10 +326,7 @@ class RegressionService:
             return []
 
         if len(values) != len(feature_names):
-            feature_names = [
-                f"feature_{index}"
-                for index in range(len(values))
-            ]
+            feature_names = [f"feature_{index}" for index in range(len(values))]
 
         pairs = sorted(
             zip(feature_names, values, strict=False),

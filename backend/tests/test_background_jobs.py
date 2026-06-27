@@ -38,7 +38,9 @@ def test_background_job_cancel_stops_queued_job(db_session: Session) -> None:
         autostart=False,
     )
 
-    cancelled = background_job_service.cancel(db_session, job_id=response.id, owner_id=1)
+    cancelled = background_job_service.cancel(
+        db_session, job_id=response.id, owner_id=1
+    )
     rerun = background_job_service.run_job(db_session, job_id=response.id)
 
     assert cancelled.status == "cancelled"

@@ -91,7 +91,8 @@ class QuickScanService:
                     QuickScanStepResult(
                         step="eda_suggestions",
                         status="success",
-                        message=", ".join(suggestions.suggested_analyses) or "No suggestions",
+                        message=", ".join(suggestions.suggested_analyses)
+                        or "No suggestions",
                     ),
                 )
             except EDAError as exc:
@@ -120,7 +121,9 @@ class QuickScanService:
             )
         except SQLAnalysisError as exc:
             steps.append(
-                QuickScanStepResult(step="sql_import", status="failed", message=str(exc)),
+                QuickScanStepResult(
+                    step="sql_import", status="failed", message=str(exc)
+                ),
             )
 
         regression_result = None
@@ -284,9 +287,7 @@ class QuickScanService:
         if not suggestions or not suggestions.target_columns:
             return None
         target = suggestions.target_columns[0]
-        features = [
-            name for name in suggestions.feature_columns if name != target
-        ][:8]
+        features = [name for name in suggestions.feature_columns if name != target][:8]
         if not features:
             return None
         return target, features

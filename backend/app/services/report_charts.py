@@ -117,7 +117,9 @@ def _bar_markdown(column_name: str, values: list[dict[str, Any]]) -> list[str]:
     return _chart_table_markdown(f"{column_name} (bar chart)", labels, counts)
 
 
-def _chart_table_markdown(title: str, labels: list[str], counts: list[int]) -> list[str]:
+def _chart_table_markdown(
+    title: str, labels: list[str], counts: list[int]
+) -> list[str]:
     max_count = max(counts) if counts else 1
     lines = [
         f"#### {title}",

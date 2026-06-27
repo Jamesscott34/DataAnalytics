@@ -66,7 +66,9 @@ class ClusteringService:
         scaled = scaler.fit_transform(matrix.features)
 
         elbow = self._elbow_data(scaled, request)
-        model = algorithm.builder(n_clusters=request.n_clusters, random_state=request.random_state)
+        model = algorithm.builder(
+            n_clusters=request.n_clusters, random_state=request.random_state
+        )
         labels = model.fit_predict(scaled)
 
         silhouette = None
@@ -114,7 +116,9 @@ class ClusteringService:
             raise ClusteringError("Clustering result not found")
         return result
 
-    def _elbow_data(self, features: np.ndarray, request: ClusteringRequest) -> list[ElbowPoint]:
+    def _elbow_data(
+        self, features: np.ndarray, request: ClusteringRequest
+    ) -> list[ElbowPoint]:
         """Compute inertia for k=1..max_k to support elbow plots."""
         max_k = min(request.max_k, features.shape[0])
         points: list[ElbowPoint] = []

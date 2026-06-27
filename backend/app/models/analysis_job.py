@@ -33,7 +33,10 @@ class AnalysisJob(Base):
     )
     job_type: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[JobStatus] = mapped_column(
-        Enum(JobStatus, values_callable=lambda enum_cls: [item.value for item in enum_cls]),
+        Enum(
+            JobStatus,
+            values_callable=lambda enum_cls: [item.value for item in enum_cls],
+        ),
         nullable=False,
         default=JobStatus.QUEUED,
     )
@@ -47,5 +50,9 @@ class AnalysisJob(Base):
         server_default=func.now(),
         nullable=False,
     )
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )

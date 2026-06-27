@@ -73,14 +73,7 @@ def test_pca_variance_and_projections(client: TestClient) -> None:
     """PCA returns explained variance and projected coordinates."""
     pca_service.clear_results()
     token = _analyst_token(client)
-    content = (
-        b"a,b,c\n"
-        b"1,2,3\n"
-        b"2,4,6\n"
-        b"3,6,9\n"
-        b"4,8,12\n"
-        b"5,10,15\n"
-    )
+    content = b"a,b,c\n" b"1,2,3\n" b"2,4,6\n" b"3,6,9\n" b"4,8,12\n" b"5,10,15\n"
     file_id = _upload(client, token, "pca-data.csv", content)
 
     response = client.post(

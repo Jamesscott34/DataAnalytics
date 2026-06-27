@@ -52,7 +52,9 @@ def get_job(
 ) -> JobResponse:
     """Return a job's latest progress."""
     try:
-        return background_job_service.get_job(db, job_id=job_id, owner_id=current_user.id)
+        return background_job_service.get_job(
+            db, job_id=job_id, owner_id=current_user.id
+        )
     except BackgroundJobError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -68,7 +70,9 @@ def cancel_job(
 ) -> JobResponse:
     """Cancel a queued or running job."""
     try:
-        return background_job_service.cancel(db, job_id=job_id, owner_id=current_user.id)
+        return background_job_service.cancel(
+            db, job_id=job_id, owner_id=current_user.id
+        )
     except BackgroundJobError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

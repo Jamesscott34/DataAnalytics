@@ -30,7 +30,9 @@ def _upload(client: TestClient, token: str, filename: str, content: bytes) -> in
     return response.json()["file_id"]
 
 
-def test_explainability_returns_regression_feature_importance(client: TestClient) -> None:
+def test_explainability_returns_regression_feature_importance(
+    client: TestClient,
+) -> None:
     """Regression explainability exposes fallback feature importance."""
     regression_service.clear_results()
     token = _analyst_token(client)

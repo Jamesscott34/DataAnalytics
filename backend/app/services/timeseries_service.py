@@ -103,10 +103,11 @@ class TimeseriesService:
         )
 
         history = [
-            TimeseriesPoint(label=point.label, actual=point.value)
-            for point in series
+            TimeseriesPoint(label=point.label, actual=point.value) for point in series
         ]
-        for index, (point, predicted) in enumerate(zip(test, test_forecast, strict=True)):
+        for index, (point, predicted) in enumerate(
+            zip(test, test_forecast, strict=True)
+        ):
             history[train_size + index] = TimeseriesPoint(
                 label=point.label,
                 actual=point.value,

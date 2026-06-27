@@ -33,13 +33,7 @@ def test_similarity_row_mode_top_pairs(client: TestClient) -> None:
     """Row similarity returns top pairs and a preview matrix."""
     recommendation_service.clear_results()
     token = _analyst_token(client)
-    content = (
-        b"name,views,purchases\n"
-        b"A,10,2\n"
-        b"B,11,2\n"
-        b"C,1,10\n"
-        b"D,2,9\n"
-    )
+    content = b"name,views,purchases\n" b"A,10,2\n" b"B,11,2\n" b"C,1,10\n" b"D,2,9\n"
     file_id = _upload(client, token, "similarity.csv", content)
 
     response = client.post(

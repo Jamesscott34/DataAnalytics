@@ -87,7 +87,8 @@ class InsightService:
                 "target": regression_result.target_column,
                 "metrics": regression_result.metrics.model_dump(),
                 "top_features": [
-                    item.model_dump() for item in regression_result.feature_importance[:5]
+                    item.model_dump()
+                    for item in regression_result.feature_importance[:5]
                 ],
             }
         except RegressionError:

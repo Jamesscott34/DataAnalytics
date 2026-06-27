@@ -90,7 +90,9 @@ async def upload_csv(
 )
 async def upload_xlsx(
     request: Request,
-    file: Annotated[UploadFile, File(description="XLSX workbook to convert and upload")],
+    file: Annotated[
+        UploadFile, File(description="XLSX workbook to convert and upload")
+    ],
     current_user: Annotated[User, Depends(require_analyst)],
     db: Annotated[Session, Depends(get_db)],
     client_sha256: Annotated[str | None, Form()] = None,

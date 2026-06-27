@@ -53,7 +53,9 @@ def test_plugins_register_list_and_run(client: TestClient) -> None:
     names = {item["name"] for item in list_response.json()["plugins"]}
     assert names == set(ANALYTICS_PLUGINS.keys())
     anomaly = next(
-        item for item in list_response.json()["plugins"] if item["name"] == "anomaly_detection"
+        item
+        for item in list_response.json()["plugins"]
+        if item["name"] == "anomaly_detection"
     )
     assert anomaly["applicable"] is True
 
@@ -85,6 +87,8 @@ def test_plugins_hide_inapplicable_for_empty_numeric(client: TestClient) -> None
         params={"file_id": file_id},
     )
     anomaly = next(
-        item for item in list_response.json()["plugins"] if item["name"] == "anomaly_detection"
+        item
+        for item in list_response.json()["plugins"]
+        if item["name"] == "anomaly_detection"
     )
     assert anomaly["applicable"] is False

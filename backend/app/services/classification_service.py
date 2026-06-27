@@ -209,7 +209,9 @@ class ClassificationService:
             algorithm=request.algorithm,
         )
 
-    def get_result(self, result_id: str, db: Session | None = None) -> ClassificationResult:
+    def get_result(
+        self, result_id: str, db: Session | None = None
+    ) -> ClassificationResult:
         """Return a stored classification result."""
         result = result_persistence_service.load_model(
             db,
@@ -315,7 +317,9 @@ class ClassificationService:
 
         headers = [header.strip() for header in rows[0]]
         if request.target_column not in headers:
-            raise ClassificationError(f"Target column not found: {request.target_column}")
+            raise ClassificationError(
+                f"Target column not found: {request.target_column}"
+            )
         for column in request.feature_columns:
             if column not in headers:
                 raise ClassificationError(f"Feature column not found: {column}")
@@ -345,7 +349,9 @@ class ClassificationService:
             target_values.append(target_text)
 
         if len(usable_rows) < 4:
-            raise ClassificationError("Need at least four complete rows for classification")
+            raise ClassificationError(
+                "Need at least four complete rows for classification"
+            )
 
         label_encoder = LabelEncoder()
         encoded_target = label_encoder.fit_transform(target_values)
@@ -394,9 +400,7 @@ class ClassificationService:
                     feature_names.append(f"{name}={category}")
 
         features = (
-            np.hstack(feature_blocks)
-            if len(feature_blocks) > 1
-            else feature_blocks[0]
+            np.hstack(feature_blocks) if len(feature_blocks) > 1 else feature_blocks[0]
         )
 
         return _PreparedClassificationMatrix(

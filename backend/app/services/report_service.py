@@ -49,9 +49,15 @@ class ReportService:
             writer.writerow(["regression", "rmse", report.regression.metrics.rmse])
             writer.writerow(["regression", "r2", report.regression.metrics.r2])
         if report.classification:
-            writer.writerow(["classification", "algorithm", report.classification.algorithm])
-            writer.writerow(["classification", "target", report.classification.target_column])
-            writer.writerow(["classification", "accuracy", report.classification.metrics.accuracy])
+            writer.writerow(
+                ["classification", "algorithm", report.classification.algorithm]
+            )
+            writer.writerow(
+                ["classification", "target", report.classification.target_column]
+            )
+            writer.writerow(
+                ["classification", "accuracy", report.classification.metrics.accuracy]
+            )
             writer.writerow(["classification", "f1", report.classification.metrics.f1])
         return buffer.getvalue()
 

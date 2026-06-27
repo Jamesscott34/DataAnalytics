@@ -33,15 +33,7 @@ def test_regression_linear_metrics(client: TestClient) -> None:
     """Linear regression returns MAE, RMSE, and R2 on a simple dataset."""
     regression_service.clear_results()
     token = _analyst_token(client)
-    content = (
-        b"x,y\n"
-        b"1,2\n"
-        b"2,4\n"
-        b"3,6\n"
-        b"4,8\n"
-        b"5,10\n"
-        b"6,12\n"
-    )
+    content = b"x,y\n" b"1,2\n" b"2,4\n" b"3,6\n" b"4,8\n" b"5,10\n" b"6,12\n"
     file_id = _upload(client, token, "linear.csv", content)
 
     response = client.post(

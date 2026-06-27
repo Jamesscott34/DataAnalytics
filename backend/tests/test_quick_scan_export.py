@@ -88,7 +88,9 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert md_response.status_code == 200
     md_body = md_response.json()
-    assert re.match(r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.md", md_body["saved"]["filename"])
+    assert re.match(
+        r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.md", md_body["saved"]["filename"]
+    )
     saved_md = scan_results_dir / md_body["saved"]["filename"]
     assert saved_md.is_file()
     assert "Analysis Report" in saved_md.read_text(encoding="utf-8")
@@ -119,7 +121,9 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert csv_response.status_code == 200
     csv_body = csv_response.json()
-    assert re.match(r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.csv", csv_body["saved"]["filename"])
+    assert re.match(
+        r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.csv", csv_body["saved"]["filename"]
+    )
     saved_csv = scan_results_dir / csv_body["saved"]["filename"]
     assert saved_csv.is_file()
     assert "section,name,value" in saved_csv.read_text(encoding="utf-8")
@@ -131,7 +135,9 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert pdf_response.status_code == 200
     pdf_body = pdf_response.json()
-    assert re.match(r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.pdf", pdf_body["saved"]["filename"])
+    assert re.match(
+        r"scan-data_Analytics_\d{2}-\d{2}-\d{2}\.pdf", pdf_body["saved"]["filename"]
+    )
     saved_pdf = scan_results_dir / pdf_body["saved"]["filename"]
     assert saved_pdf.is_file()
     assert saved_pdf.read_bytes().startswith(b"%PDF")
@@ -175,7 +181,7 @@ def test_quick_scan_runs_analyses_and_exports(
         headers={"Authorization": f"Bearer {token}"},
     )
     assert download_md.status_code == 200
-    assert 'attachment' in download_md.headers.get("content-disposition", "").lower()
+    assert "attachment" in download_md.headers.get("content-disposition", "").lower()
     assert "Analysis Report" in download_md.text
 
 
