@@ -33,6 +33,41 @@ def list_scan_results(
 
 
 @router.get(
+    "/scan-results/{filename}/download",
+    summary="Download a saved scan result file",
+)
+def download_scan_result(
+    filename: str,
+    _: Annotated[User, Depends(require_viewer)],
+) -> Response:
+    """Serve a saved report as a file download."""
+    try:
+        if filename.lower().endswith(".pdf"):
+            pdf_content = scan_result_storage.read_bytes(filename)
+            return Response(
+                content=pdf_content,
+                media_type="application/pdf",
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
+        if filename.lower().endswith(".md"):
+            md_content = scan_result_storage.read_text(filename)
+            return Response(
+                content=md_content,
+                media_type="text/markdown; charset=utf-8",
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
+    except ScanResultStorageError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Unsupported file type",
+    )
+
+
+@router.get(
     "/scan-results/{filename}",
     summary="View a saved scan result in the browser",
 )

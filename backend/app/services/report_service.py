@@ -8,6 +8,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.schemas.quick_scan import QuickScanReport
+from app.services.report_charts import eda_charts_to_markdown, eda_charts_to_pdf_flowables
 
 
 class ReportService:
@@ -75,6 +76,7 @@ class ReportService:
             if report.eda.quality_warnings:
                 lines.extend(["", "### Quality warnings", ""])
                 lines.extend(f"- {warning}" for warning in report.eda.quality_warnings)
+            lines.extend(eda_charts_to_markdown(report.eda.chart_data))
 
         if report.suggestions:
             lines.extend(
@@ -143,19 +145,44 @@ class ReportService:
                 ],
             )
             labels = report.classification.confusion_matrix.labels
-            header = "| Actual \\\\ Predicted | " + " | ".join(labels) + " |"
-            separator = "| --- | " + " | ".join("---" for _ in labels) + " |"
-            lines.extend([header, separator])
-            for label, matrix_row in zip(
-                labels,
-                report.classification.confusion_matrix.matrix,
-                strict=True,
-            ):
+            confusion = report.classification.confusion_matrix
+            if confusion.included and labels:
+                header = "| Actual \\\\ Predicted | " + " | ".join(labels) + " |"
+                separator = "| --- | " + " | ".join("---" for _ in labels) + " |"
+                lines.extend([header, separator])
+                for label, matrix_row in zip(
+                    labels,
+                    confusion.matrix,
+                    strict=True,
+                ):
+                    lines.append(
+                        f"| {label} | "
+                        + " | ".join(str(value) for value in matrix_row)
+                        + " |",
+                    )
+            else:
                 lines.append(
-                    f"| {label} | "
-                    + " | ".join(str(value) for value in matrix_row)
-                    + " |",
+                    confusion.message
+                    or (
+                        f"Confusion matrix omitted "
+                        f"({confusion.class_count} classes — too many to display)."
+                    ),
                 )
+            if report.classification.classification_report:
+                lines.extend(
+                    [
+                        "",
+                        "### Per-class report",
+                        "",
+                        "| Class | Precision | Recall | F1 | Support |",
+                        "| --- | --- | --- | --- | --- |",
+                    ],
+                )
+                for row in report.classification.classification_report:
+                    lines.append(
+                        f"| {row.label} | {row.precision} | {row.recall} | "
+                        f"{row.f1} | {row.support} |",
+                    )
 
         if report.notes:
             lines.extend(["", "## Notes", ""])
@@ -243,6 +270,7 @@ class ReportService:
                 ),
             )
             story.append(column_table)
+            story.extend(eda_charts_to_pdf_flowables(report.eda.chart_data))
             story.append(Spacer(1, 16))
 
         if report.regression:

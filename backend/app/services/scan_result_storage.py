@@ -117,6 +117,7 @@ class ScanResultStorage:
             size_bytes=stat.st_size,
             saved_at=datetime.fromtimestamp(stat.st_mtime, tz=UTC),
             view_url=f"/api/v1/export/scan-results/{path.name}",
+            download_url=f"/api/v1/export/scan-results/{path.name}/download",
         )
 
 

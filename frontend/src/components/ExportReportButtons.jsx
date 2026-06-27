@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getScanResultViewPath, saveMarkdownReport, savePdfReport } from '../api/export.js';
+import { getScanResultViewPath, saveMarkdownReport, savePdfReport, downloadScanResult } from '../api/export.js';
 
 /**
  * ExportReportButtons
@@ -25,6 +25,7 @@ export function ExportReportButtons({ report, exporting, onExportStart, onExport
           : await savePdfReport(report.report_id);
       setLastSaved(response.saved);
       setMessage(`Saved as ${response.saved.filename}`);
+      await downloadScanResult(response.saved.filename);
       onSaved?.(response.saved);
     } catch (err) {
       setMessage(err.message);
@@ -57,6 +58,14 @@ export function ExportReportButtons({ report, exporting, onExportStart, onExport
       {lastSaved && (
         <p className="upload-help">
           <Link to={getScanResultViewPath(lastSaved.filename)}>View {lastSaved.filename}</Link>
+          {' · '}
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => downloadScanResult(lastSaved.filename)}
+          >
+            Download again
+          </button>
         </p>
       )}
     </div>

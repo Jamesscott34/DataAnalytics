@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
-import { getScanResultViewPath, listScanResults } from '../api/export.js';
+import { getScanResultViewPath, listScanResults, downloadScanResult } from '../api/export.js';
 
 function formatBytes(bytes) {
   if (bytes < 1024) {
@@ -84,7 +84,14 @@ export function ScanResultsPanel({ refreshKey = 0 }) {
                 </span>
               </div>
               <div className="inline-links">
-                <Link to={getScanResultViewPath(item.filename)}>View in browser</Link>
+                <Link to={getScanResultViewPath(item.filename)}>View</Link>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => downloadScanResult(item.filename)}
+                >
+                  Download
+                </button>
               </div>
             </li>
           ))}

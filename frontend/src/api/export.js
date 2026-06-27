@@ -65,6 +65,32 @@ export function getScanResultViewPath(filename) {
 }
 
 /**
+ * Download a saved scan result file to the user's machine.
+ *
+ * @param {string} filename
+ * @returns {Promise<void>}
+ */
+export async function downloadScanResult(filename) {
+  const response = await fetch(
+    `${API_BASE_URL}/export/scan-results/${encodeURIComponent(filename)}/download`,
+    {
+      headers: authHeaders({ Accept: '*/*' }),
+    },
+  );
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message ?? body.detail ?? 'Download failed');
+  }
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Fetch a saved scan result for inline viewing.
  *
  * @param {string} filename

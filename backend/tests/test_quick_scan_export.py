@@ -92,6 +92,9 @@ def test_quick_scan_runs_analyses_and_exports(
     assert saved_md.is_file()
     assert "Analysis Report" in saved_md.read_text(encoding="utf-8")
     assert "## Exploratory data analysis" in saved_md.read_text(encoding="utf-8")
+    md_text = saved_md.read_text(encoding="utf-8")
+    assert "### EDA charts" in md_text
+    assert "region (bar chart)" in md_text or "units (histogram)" in md_text
 
     pdf_response = client.post(
         "/api/v1/export/pdf",
@@ -129,3 +132,24 @@ def test_quick_scan_runs_analyses_and_exports(
     )
     assert view_pdf.status_code == 200
     assert view_pdf.content.startswith(b"%PDF")
+
+    download_md = client.get(
+        f"/api/v1/export/scan-results/{md_body['saved']['filename']}/download",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert download_md.status_code == 200
+    assert 'attachment' in download_md.headers.get("content-disposition", "").lower()
+    assert "Analysis Report" in download_md.text
+
+
+def test_get_quick_scan_returns_204_when_missing(client: TestClient) -> None:
+    """GET quick scan returns 204 when no report exists for the file."""
+    quick_scan_service.clear_reports()
+    token = _analyst_token(client)
+    file_id = _upload(client, token, "no-scan.csv", b"a,b\n1,2\n")
+
+    response = client.get(
+        f"/api/v1/files/{file_id}/quick-scan",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 204

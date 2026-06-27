@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     )
 
     upload_dir: str = Field(default="./data/uploads", alias="UPLOAD_DIR")
-    scan_results_dir: str = Field(default="./data/scan_results", alias="SCAN_RESULTS_DIR")
+    scan_results_dir: str = Field(default="../scan_results", alias="SCAN_RESULTS_DIR")
     max_upload_size_mb: int = Field(default=250, alias="MAX_UPLOAD_SIZE_MB")
     large_file_warning_mb: int = Field(default=50, alias="LARGE_FILE_WARNING_MB")
     temp_assets_dir: str = Field(default="../temp_assets", alias="TEMP_ASSETS_DIR")

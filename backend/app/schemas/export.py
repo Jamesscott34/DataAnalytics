@@ -20,6 +20,7 @@ class SavedScanResult(BaseModel):
     size_bytes: int
     saved_at: datetime
     view_url: str
+    download_url: str
 
 
 class ScanResultListResponse(BaseModel):

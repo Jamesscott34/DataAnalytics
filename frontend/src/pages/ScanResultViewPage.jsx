@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { fetchScanResult } from '../api/export.js';
+import { downloadScanResult, fetchScanResult } from '../api/export.js';
 
 /**
  * ScanResultViewPage
@@ -71,6 +71,9 @@ export function ScanResultViewPage() {
         <div className="inline-links">
           <Link to="/dashboard">Back to dashboard</Link>
           <Link to="/scan">Run another scan</Link>
+          <button type="button" className="text-button" onClick={() => downloadScanResult(filename)}>
+            Download
+          </button>
         </div>
       </header>
 
