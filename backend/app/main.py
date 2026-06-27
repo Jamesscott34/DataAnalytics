@@ -6,6 +6,7 @@ middleware. Does not contain business logic or route handlers beyond wiring.
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+import threading
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,7 +42,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging()
     from app.services.asset_integrity_service import asset_integrity_service
 
-    asset_integrity_service.refresh_disk_scan()
+    # Hash watched asset folders in the background so login/API are not blocked
+    # while large CSV/XLSX files in temp_assets are scanned.
+    threading.Thread(
+        target=asset_integrity_service.refresh_disk_scan,
+        name="asset-integrity-scan",
+        daemon=True,
+    ).start()
     yield
     asset_integrity_service.lock_manifest()
 
