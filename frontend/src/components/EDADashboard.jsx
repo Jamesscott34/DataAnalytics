@@ -127,11 +127,11 @@ export function EDADashboard({ eda, suggestions }) {
 function formatColumnStats(column) {
   if (column.numeric_stats) {
     const stats = column.numeric_stats;
-    return `mean ${stats.mean ?? '—'}, min ${stats.min ?? '—'}, max ${stats.max ?? '—'}`;
+    return `mean ${stats.mean ?? 'n/a'}, min ${stats.min ?? 'n/a'}, max ${stats.max ?? 'n/a'}`;
   }
   if (column.categorical_stats) {
     const top = column.categorical_stats.top_values[0];
-    return top ? `top: ${top.value} (${top.count})` : '—';
+    return top ? `top: ${top.value} (${top.count})` : 'n/a';
   }
-  return column.sample_values.slice(0, 2).join(', ') || '—';
+  return column.sample_values.slice(0, 2).join(', ') || 'n/a';
 }

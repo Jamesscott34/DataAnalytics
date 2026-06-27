@@ -28,16 +28,19 @@ export function DashboardEdaPanel({ fileId, filename }) {
       try {
         const response = await getEda(fileId);
         if (!cancelled) {
-          setEda(response);
+          if (response) {
+            setEda(response);
+            setNotRun(false);
+          } else {
+            setNotRun(true);
+            setEda(null);
+          }
         }
       } catch (err) {
         if (!cancelled) {
-          if (/not been run|not found/i.test(err.message)) {
-            setNotRun(true);
-            setEda(null);
-          } else {
-            setError(err.message);
-          }
+          setError(err.message);
+          setEda(null);
+          setNotRun(false);
         }
       } finally {
         if (!cancelled) {
