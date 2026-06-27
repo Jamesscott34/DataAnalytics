@@ -1,0 +1,37 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    env_file:
+      - backend/.env.example
+    environment:
+      DATABASE_URL: sqlite:////app/data/app.db
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://localhost
+      UPLOAD_DIR: /app/data/uploads
+      SCAN_RESULTS_DIR: /app/scan_results
+      TEMP_ASSETS_DIR: /app/temp_assets
+    volumes:
+      - backend-data:/app/data
+      - ./scan_results:/app/scan_results
+      - ./temp_assets:/app/temp_assets
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  backend-data:
