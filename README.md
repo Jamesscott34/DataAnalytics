@@ -1,8 +1,8 @@
 # predictive-security-analytics-lab
 
-Portfolio-grade full-stack analytics platform: secure CSV ingestion, exploratory data analysis, predictive ML, SQL analytics, business KPIs, and professional report export.
+![CI](https://github.com/example/predictive-security-analytics-lab/actions/workflows/ci.yml/badge.svg)
 
-**Current phase:** Phase 2 — Task 9 (`temp_assets` selector) next.
+Portfolio-grade full-stack analytics platform: secure CSV ingestion, exploratory data analysis, predictive ML, SQL analytics, business KPIs, AI insights, and professional report export.
 
 ## Planning documents
 
@@ -13,10 +13,46 @@ Portfolio-grade full-stack analytics platform: secure CSV ingestion, exploratory
 | [docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) | ER diagram, tables, Alembic migration plan |
 | [docs/COMPONENT_TREE.md](docs/COMPONENT_TREE.md) | React pages, components, hooks, and data flow |
 | [docs/TASKS.md](docs/TASKS.md) | 35-task implementation plan mapped to git branches |
+| [docs/TESTING.md](docs/TESTING.md) | Backend and frontend test strategy |
+| [docs/DATA_WORKFLOW.md](docs/DATA_WORKFLOW.md) | End-to-end analysis workflow |
+| [docs/SECURITY.md](docs/SECURITY.md) | Security model and scanner behaviour |
+| [docs/MODELS.md](docs/MODELS.md) | ML model families and explainability matrix |
 
 ## Tech stack
 
-Python 3.12 · FastAPI · SQLAlchemy · Alembic · Pandas · scikit-learn · React · Vite · Recharts · Docker · GitHub Actions
+Python 3.12 · FastAPI · SQLAlchemy · Alembic · Pandas · scikit-learn · React · Vite · Docker · GitHub Actions
+
+## Quick start
+
+```bash
+# Backend
+cd backend && python -m venv .venv && .venv/bin/pip install -r requirements.txt
+cp .env.example .env
+.venv/bin/alembic upgrade head
+.venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+# Frontend
+cd frontend && npm install && npm run dev
+```
+
+Docker:
+
+```bash
+docker compose up --build
+```
+
+Open http://localhost:5173 (frontend) and http://localhost:8000/api/v1/docs (API).
+
+## Validation
+
+```bash
+chmod +x scripts/validate.sh
+./scripts/validate.sh
+```
+
+## Deployment
+
+See [deploy/railway.md](deploy/railway.md) for Railway deployment notes.
 
 ## Licence
 
@@ -24,14 +60,4 @@ MIT (see [LICENSE](LICENSE)).
 
 ## Development status
 
-| Phase | Scope | Status |
-|-------|-------|--------|
-| 0 | Planning docs | Done |
-| 1 | Tasks 1–5 — scaffold, API, frontend shell, DB, config | Done |
-| 2 | Tasks 6–11 — auth, upload, scanner, assets, audit, versioning | In progress (Tasks 6–8 done) |
-| 3 | Tasks 12–19 — EDA, SQL, ML models | Pending |
-| 4 | Tasks 20–25 — explainability, business, charts, export | Pending |
-| 5 | Tasks 26–28 — jobs, plugins, monitoring | Pending |
-| 6 | Tasks 29–35 — tests, CI, Docker, deploy, validation | Pending |
-
-Task detail and commit mapping: [docs/TASKS.md](docs/TASKS.md).
+All 35 implementation tasks are complete on branch `feature/versioning`. Task detail and commit mapping: [docs/TASKS.md](docs/TASKS.md).
