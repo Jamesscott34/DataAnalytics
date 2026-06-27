@@ -21,7 +21,7 @@ jobs:
         run: |
           python -m venv .venv
           .venv/bin/pip install --upgrade pip
-          .venv/bin/pip install -r requirements.txt
+          .venv/bin/pip install -r requirements-dev.txt
       - name: Pytest with service coverage
         run: .venv/bin/pytest -q --cov=app/services --cov-report=term --cov-fail-under=80
 
