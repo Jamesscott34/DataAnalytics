@@ -4,6 +4,7 @@ import { DatasetFilePicker } from '../components/DatasetFilePicker.jsx';
 import { DatasetFileToolbar } from '../components/DatasetFileToolbar.jsx';
 import { InsightsPanel } from '../components/InsightsPanel.jsx';
 import { KPICard } from '../components/KPICard.jsx';
+import { TrendBarChart } from '../components/charts/TrendBarChart.jsx';
 import { useBusinessAnalytics } from '../hooks/useBusinessAnalytics.js';
 import { getLastFile, setLastFile } from '../utils/lastFile.js';
 import { workspaceLinks } from '../utils/workspaceLinks.js';
@@ -125,6 +126,7 @@ export function BusinessDashboardPage() {
           <InsightsPanel resultId={report.result_id} analysisType="business" />
           {report.revenue_by_month.length > 0 && (
             <>
+              <TrendBarChart points={report.revenue_by_month} title="Revenue by month" />
               <h2>Revenue by month</h2>
               <ul className="file-list">
                 {report.revenue_by_month.map((point) => (

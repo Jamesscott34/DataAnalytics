@@ -1,3 +1,5 @@
+import { TopPairsChart } from './charts/TopPairsChart.jsx';
+
 export function SimilarityResults({ result }) {
   if (!result) {
     return null;
@@ -26,6 +28,7 @@ export function SimilarityResults({ result }) {
 
       {result.top_pairs.length > 0 && (
         <>
+          <TopPairsChart pairs={result.top_pairs} title="Top similarity scores" />
           <h3>Top similar pairs</h3>
           <div className="table-scroll">
             <table className="data-table">

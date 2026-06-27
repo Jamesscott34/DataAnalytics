@@ -4,6 +4,10 @@ import { BarChart } from './BarChart.jsx';
 import { ForecastChart } from './ForecastChart.jsx';
 import { HistogramChart } from './HistogramChart.jsx';
 import { MissingValuesChart } from './MissingValuesChart.jsx';
+import { ConfusionMatrixChart } from './ConfusionMatrixChart.jsx';
+import { ResidualChart } from './ResidualChart.jsx';
+import { TopPairsChart } from './TopPairsChart.jsx';
+import { TrendBarChart } from './TrendBarChart.jsx';
 import { EDADashboard } from '../EDADashboard.jsx';
 
 describe('BarChart', () => {
@@ -68,6 +72,36 @@ describe('MissingValuesChart', () => {
       />,
     );
     expect(screen.getByText(/no missing values detected/i)).toBeInTheDocument();
+  });
+});
+
+describe('Result charts', () => {
+  it('renders residual magnitudes', () => {
+    render(<ResidualChart residuals={[0.2, -1.4]} />);
+    expect(screen.getByLabelText('Bar chart for Residual magnitude')).toBeInTheDocument();
+  });
+
+  it('renders confusion matrix heatmap', () => {
+    render(
+      <ConfusionMatrixChart
+        labels={['A', 'B']}
+        matrix={[
+          [2, 1],
+          [0, 3],
+        ]}
+      />,
+    );
+    expect(screen.getByLabelText('Confusion matrix heatmap')).toBeInTheDocument();
+  });
+
+  it('renders top pair scores', () => {
+    render(<TopPairsChart pairs={[{ left: 'A', right: 'B', score: 0.94 }]} />);
+    expect(screen.getByLabelText('Bar chart for Top scores')).toBeInTheDocument();
+  });
+
+  it('renders trend bars', () => {
+    render(<TrendBarChart points={[{ label: 'Jan', value: 120 }]} />);
+    expect(screen.getByLabelText('Bar chart for Trend')).toBeInTheDocument();
   });
 });
 

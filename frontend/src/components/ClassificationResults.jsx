@@ -1,5 +1,6 @@
 import { InsightsPanel } from './InsightsPanel.jsx';
 import { ShapSummaryPanel } from './ShapSummaryPanel.jsx';
+import { ConfusionMatrixChart } from './charts/ConfusionMatrixChart.jsx';
 
 /**
  * ClassificationResults
@@ -55,6 +56,7 @@ export function ClassificationResults({ result }) {
 
       <ShapSummaryPanel confidenceSummary={confidenceSummary} />
       <InsightsPanel resultId={result.result_id} analysisType="classification" />
+      {showMatrix && <ConfusionMatrixChart labels={labels} matrix={matrix} />}
 
       <h3>Confusion matrix</h3>
       {showMatrix ? (

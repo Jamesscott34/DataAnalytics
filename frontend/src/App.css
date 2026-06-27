@@ -911,6 +911,24 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
+.matrix-heatmap {
+  display: grid;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.matrix-heatmap strong {
+  font-size: 0.8rem;
+}
+
+.matrix-heatmap-cell {
+  background: #2563eb;
+  border-radius: 6px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  padding: 0.45rem;
+}
+
 .histogram-chart {
   align-items: flex-end;
   display: flex;

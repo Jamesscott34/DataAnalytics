@@ -1,6 +1,7 @@
 import { InsightsPanel } from './InsightsPanel.jsx';
 import { ShapSummaryPanel } from './ShapSummaryPanel.jsx';
 import { FeatureImportanceChart } from './charts/FeatureImportanceChart.jsx';
+import { ResidualChart } from './charts/ResidualChart.jsx';
 
 /**
  * RegressionResults
@@ -39,6 +40,7 @@ export function RegressionResults({ result }) {
       </p>
 
       <FeatureImportanceChart data={result.feature_importance} />
+      <ResidualChart residuals={result.residuals} />
       <ShapSummaryPanel explainability={result.explainability} />
       <InsightsPanel resultId={result.result_id} analysisType="regression" />
 
