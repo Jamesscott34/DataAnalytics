@@ -8,7 +8,9 @@ export function ClassificationResults({ result }) {
     return null;
   }
 
-  const { labels, matrix } = result.confusion_matrix;
+  const { labels, matrix, included, message, class_count: classCount } =
+    result.confusion_matrix;
+  const showMatrix = included !== false && labels.length > 0;
 
   return (
     <section className="classification-results" aria-label="Classification results">
@@ -37,56 +39,67 @@ export function ClassificationResults({ result }) {
       </p>
 
       <h3>Confusion matrix</h3>
-      <div className="table-scroll">
-        <table className="data-table confusion-matrix-table">
-          <thead>
-            <tr>
-              <th scope="col">Actual \ Predicted</th>
-              {labels.map((label) => (
-                <th key={label} scope="col">
-                  {label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {matrix.map((row, rowIndex) => (
-              <tr key={labels[rowIndex]}>
-                <th scope="row">{labels[rowIndex]}</th>
-                {row.map((value, columnIndex) => (
-                  <td key={`${rowIndex}-${columnIndex}`}>{value}</td>
+      {showMatrix ? (
+        <div className="table-scroll">
+          <table className="data-table confusion-matrix-table">
+            <thead>
+              <tr>
+                <th scope="col">Actual \ Predicted</th>
+                {labels.map((label) => (
+                  <th key={label} scope="col">
+                    {label}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {matrix.map((row, rowIndex) => (
+                <tr key={labels[rowIndex]}>
+                  <th scope="row">{labels[rowIndex]}</th>
+                  {row.map((value, columnIndex) => (
+                    <td key={`${rowIndex}-${columnIndex}`}>{value}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="upload-help">
+          {message ||
+            `Confusion matrix omitted (${classCount ?? labels.length} classes; too many to display usefully).`}
+        </p>
+      )}
 
-      <h3>Per-class report</h3>
-      <div className="table-scroll">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th scope="col">Class</th>
-              <th scope="col">Precision</th>
-              <th scope="col">Recall</th>
-              <th scope="col">F1</th>
-              <th scope="col">Support</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.classification_report.map((row) => (
-              <tr key={row.label}>
-                <th scope="row">{row.label}</th>
-                <td>{row.precision}</td>
-                <td>{row.recall}</td>
-                <td>{row.f1}</td>
-                <td>{row.support}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {result.classification_report.length > 0 && (
+        <>
+          <h3>Per-class report</h3>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">Class</th>
+                  <th scope="col">Precision</th>
+                  <th scope="col">Recall</th>
+                  <th scope="col">F1</th>
+                  <th scope="col">Support</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.classification_report.map((row) => (
+                  <tr key={row.label}>
+                    <th scope="row">{row.label}</th>
+                    <td>{row.precision}</td>
+                    <td>{row.recall}</td>
+                    <td>{row.f1}</td>
+                    <td>{row.support}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <h3>Predictions</h3>
       <div className="table-scroll">
@@ -103,7 +116,7 @@ export function ClassificationResults({ result }) {
               <tr key={`${row.actual}-${row.predicted}-${index}`}>
                 <td>{row.actual}</td>
                 <td>{row.predicted}</td>
-                <td>{row.confidence ?? '—'}</td>
+                <td>{row.confidence ?? 'n/a'}</td>
               </tr>
             ))}
           </tbody>

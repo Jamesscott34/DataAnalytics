@@ -63,6 +63,7 @@ def test_classification_metrics_and_confusion_matrix(client: TestClient) -> None
     assert body["metrics"]["accuracy"] >= 0.5
     assert body["metrics"]["f1"] >= 0.0
     assert len(body["confusion_matrix"]["labels"]) == 2
+    assert body["confusion_matrix"]["included"] is True
     assert len(body["confusion_matrix"]["matrix"]) == 2
     assert len(body["predictions"]) >= 1
     assert any(item["confidence"] is not None for item in body["predictions"])
@@ -120,3 +121,35 @@ def test_classification_all_algorithms_supported(client: TestClient) -> None:
         )
         assert response.status_code == 200, algorithm
         assert response.json()["algorithm"] == algorithm
+
+
+def test_classification_omits_confusion_matrix_for_many_classes(
+    client: TestClient,
+) -> None:
+    """High-cardinality targets still return metrics but skip the confusion matrix."""
+    classification_service.clear_results()
+    token = _analyst_token(client)
+    headers = [b"f1", b"f2", b"label"]
+    rows = [b",".join(headers)]
+    for index in range(40):
+        rows.append(f"{index},{index * 2},{index % 15}".encode())
+    content = b"\n".join(rows) + b"\n"
+    file_id = _upload(client, token, "many-classes.csv", content)
+
+    response = client.post(
+        f"/api/v1/models/{file_id}/classification",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "algorithm": "logistic",
+            "target_column": "label",
+            "feature_columns": ["f1", "f2"],
+            "test_size": 0.25,
+            "random_state": 1,
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["confusion_matrix"]["included"] is False
+    assert body["confusion_matrix"]["labels"] == []
+    assert body["classification_report"] == []
+    assert "omitted" in body["confusion_matrix"]["message"].lower()

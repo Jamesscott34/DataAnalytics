@@ -49,6 +49,10 @@ class ClassificationError(ValueError):
     """Raised when classification cannot be trained on a dataset."""
 
 
+# Confusion matrices above this size are omitted from API responses and reports.
+MAX_DISPLAY_CLASSES = 12
+
+
 class ClassificationService:
     """Service for training classification models on uploaded CSV files."""
 
@@ -138,16 +142,37 @@ class ClassificationService:
         )
 
         labels = [str(label) for label in matrix.label_encoder.classes_]
-        matrix_values = confusion_matrix(
-            y_test,
-            predictions,
-            labels=list(range(len(labels))),
-        )
-        report = self._classification_report(
-            y_test=y_test,
-            predictions=predictions,
-            label_encoder=matrix.label_encoder,
-        )
+        class_count = len(labels)
+        if class_count > MAX_DISPLAY_CLASSES:
+            confusion = ConfusionMatrix(
+                labels=[],
+                matrix=[],
+                included=False,
+                class_count=class_count,
+                message=(
+                    f"Confusion matrix omitted ({class_count} classes). "
+                    f"Use a categorical target with at most {MAX_DISPLAY_CLASSES} classes, "
+                    "or use regression for numeric targets."
+                ),
+            )
+            report = []
+        else:
+            matrix_values = confusion_matrix(
+                y_test,
+                predictions,
+                labels=list(range(class_count)),
+            )
+            confusion = ConfusionMatrix(
+                labels=labels,
+                matrix=matrix_values.astype(int).tolist(),
+                included=True,
+                class_count=class_count,
+            )
+            report = self._classification_report(
+                y_test=y_test,
+                predictions=predictions,
+                label_encoder=matrix.label_encoder,
+            )
         prediction_rows = [
             ClassificationPrediction(
                 actual=str(actual),
@@ -171,10 +196,7 @@ class ClassificationService:
             train_rows=len(x_train),
             test_rows=len(x_test),
             metrics=metrics,
-            confusion_matrix=ConfusionMatrix(
-                labels=labels,
-                matrix=matrix_values.astype(int).tolist(),
-            ),
+            confusion_matrix=confusion,
             classification_report=report,
             predictions=prediction_rows,
         )

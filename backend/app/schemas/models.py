@@ -121,8 +121,11 @@ class ClassificationMetrics(BaseModel):
 class ConfusionMatrix(BaseModel):
     """Confusion matrix with row/column class labels."""
 
-    labels: list[str]
-    matrix: list[list[int]]
+    labels: list[str] = Field(default_factory=list)
+    matrix: list[list[int]] = Field(default_factory=list)
+    included: bool = True
+    class_count: int = 0
+    message: str | None = None
 
 
 class ClassReportItem(BaseModel):

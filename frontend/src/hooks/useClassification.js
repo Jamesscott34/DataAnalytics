@@ -28,10 +28,8 @@ export function useClassification(fileId) {
       const registry = await getModelRegistry();
       setAlgorithms(registry.classification ?? []);
 
-      let edaResponse = null;
-      try {
-        edaResponse = await getEda(fileId);
-      } catch {
+      let edaResponse = await getEda(fileId);
+      if (!edaResponse) {
         try {
           edaResponse = await runEda(fileId, { forceRefresh: false });
         } catch {
