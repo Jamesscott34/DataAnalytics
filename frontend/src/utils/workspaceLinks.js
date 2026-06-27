@@ -14,6 +14,7 @@ export function workspaceLinks(fileId) {
     { to: `/pca/${fileId}`, label: 'PCA' },
     { to: `/timeseries/${fileId}`, label: 'Time series' },
     { to: `/similarity/${fileId}`, label: 'Similarity' },
+    { to: `/business/${fileId}`, label: 'Business' },
     { to: `/versions/${fileId}`, label: 'Versions' },
   ];
 }

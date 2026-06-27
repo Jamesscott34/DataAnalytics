@@ -4,6 +4,7 @@ import { AssetIntegrityGate } from './components/AssetIntegrityGate.jsx';
 import { ProtectedRoute } from './components/ProtectedRoute.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import { AssetsPage } from './pages/AssetsPage.jsx';
+import { BusinessDashboardPage } from './pages/BusinessDashboardPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { HealthStatusPage } from './pages/HealthStatusPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
@@ -186,6 +187,22 @@ function App() {
               element={
                 <ProtectedRoute roles={['admin', 'analyst']}>
                   <SimilarityPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/business"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <BusinessDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/business/:fileId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <BusinessDashboardPage />
                 </ProtectedRoute>
               }
             />

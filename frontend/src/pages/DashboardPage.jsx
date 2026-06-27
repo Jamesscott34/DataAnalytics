@@ -154,6 +154,13 @@ export function DashboardPage() {
             Open similarity
           </Link>
         </article>
+        <article className="action-card">
+          <h2>Business analytics</h2>
+          <p>Calculate revenue, cost, margin, and monthly KPI summaries.</p>
+          <Link className="primary-link" to="/business">
+            Open business analytics
+          </Link>
+        </article>
         {lastFile && (
           <article className="action-card action-card--highlight">
             <h2>Continue with last file</h2>
@@ -170,6 +177,7 @@ export function DashboardPage() {
               <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
               <Link to={`/timeseries/${lastFile.fileId}`}>Time series</Link>
               <Link to={`/similarity/${lastFile.fileId}`}>Similarity</Link>
+              <Link to={`/business/${lastFile.fileId}`}>Business</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Version history</Link>
             </div>
           </article>
@@ -245,6 +253,7 @@ export function DashboardPage() {
                   <Link to={`/pca/${file.id}`}>PCA</Link>
                   <Link to={`/timeseries/${file.id}`}>Time series</Link>
                   <Link to={`/similarity/${file.id}`}>Similarity</Link>
+                  <Link to={`/business/${file.id}`}>Business</Link>
                   <Link to={`/versions/${file.id}`}>Versions</Link>
                 </div>
               </li>

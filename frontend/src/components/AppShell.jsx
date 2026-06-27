@@ -58,6 +58,7 @@ export function AppShell() {
               <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
               <Link to={`/timeseries/${lastFile.fileId}`}>Time series</Link>
               <Link to={`/similarity/${lastFile.fileId}`}>Similarity</Link>
+              <Link to={`/business/${lastFile.fileId}`}>Business</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Versions</Link>
             </div>
           </section>
