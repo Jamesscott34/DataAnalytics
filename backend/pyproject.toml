@@ -32,6 +32,16 @@ ignore_missing_imports = true
 testpaths = ["tests"]
 pythonpath = ["."]
 
+[tool.coverage.run]
+source = ["app/services"]
+omit = ["app/services/__init__.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
+
 [tool.bandit]
 exclude_dirs = ["tests"]
 
