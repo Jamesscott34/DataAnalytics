@@ -18,6 +18,8 @@ from app.schemas.models import (
     PCAResult,
     RegressionRequest,
     RegressionResult,
+    SimilarityRequest,
+    SimilarityResult,
     TimeseriesRequest,
     TimeseriesResult,
 )
@@ -28,6 +30,7 @@ from app.services.classification_service import (
 from app.services.clustering_service import ClusteringError, clustering_service
 from app.services.pca_service import PCAError, pca_service
 from app.services.plugin_registry import model_registry_response
+from app.services.recommendation_service import RecommendationError, recommendation_service
 from app.services.regression_service import RegressionError, regression_service
 from app.services.timeseries_service import TimeseriesError, timeseries_service
 
@@ -175,6 +178,27 @@ def run_timeseries_forecast(
         ) from exc
 
 
+@router.post(
+    "/{file_id}/similarity",
+    response_model=SimilarityResult,
+    summary="Run row or item cosine similarity",
+)
+def run_similarity(
+    file_id: int,
+    request: SimilarityRequest,
+    db: Annotated[Session, Depends(get_db)],
+    _: Annotated[User, Depends(require_analyst)],
+) -> SimilarityResult:
+    """Compute cosine similarity for rows or selected feature columns."""
+    try:
+        return recommendation_service.run_similarity(db, file_id=file_id, request=request)
+    except RecommendationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
+
+
 @router.get(
     "/results/{result_id}",
     response_model=(
@@ -183,6 +207,7 @@ def run_timeseries_forecast(
         | ClusteringResult
         | PCAResult
         | TimeseriesResult
+        | SimilarityResult
     ),
     summary="Get a stored model result",
 )
@@ -195,6 +220,7 @@ def get_model_result(
     | ClusteringResult
     | PCAResult
     | TimeseriesResult
+    | SimilarityResult
 ):
     """Return a previously trained model or analysis result."""
     try:
@@ -215,7 +241,11 @@ def get_model_result(
         pass
     try:
         return timeseries_service.get_result(result_id)
-    except TimeseriesError as exc:
+    except TimeseriesError:
+        pass
+    try:
+        return recommendation_service.get_result(result_id)
+    except RecommendationError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),

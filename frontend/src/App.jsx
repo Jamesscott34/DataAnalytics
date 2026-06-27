@@ -16,6 +16,7 @@ import { TimeSeriesPage } from './pages/TimeSeriesPage.jsx';
 import { QuickScanPage } from './pages/QuickScanPage.jsx';
 import { ScanResultViewPage } from './pages/ScanResultViewPage.jsx';
 import { RegressionPage } from './pages/RegressionPage.jsx';
+import { SimilarityPage } from './pages/SimilarityPage.jsx';
 import { SQLAnalysisPage } from './pages/SQLAnalysisPage.jsx';
 import { SQLGroupPage } from './pages/SQLGroupPage.jsx';
 import { VersionHistoryPage } from './pages/VersionHistoryPage.jsx';
@@ -169,6 +170,22 @@ function App() {
               element={
                 <ProtectedRoute roles={['admin', 'analyst']}>
                   <TimeSeriesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/similarity"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <SimilarityPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/similarity/:fileId"
+              element={
+                <ProtectedRoute roles={['admin', 'analyst']}>
+                  <SimilarityPage />
                 </ProtectedRoute>
               }
             />

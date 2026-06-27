@@ -173,3 +173,21 @@ export async function runTimeseries(fileId, payload) {
   }
   return response.json();
 }
+
+export async function runSimilarity(fileId, payload) {
+  const response = await fetch(`${API_BASE_URL}/models/${fileId}/similarity`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      mode: payload.mode,
+      id_column: payload.idColumn || null,
+      feature_columns: payload.featureColumns,
+      top_n: payload.topN ?? 10,
+    }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.message ?? body.detail ?? 'Similarity analysis failed');
+  }
+  return response.json();
+}

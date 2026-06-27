@@ -147,6 +147,13 @@ export function DashboardPage() {
             Open time series
           </Link>
         </article>
+        <article className="action-card">
+          <h2>Similarity</h2>
+          <p>Find similar rows or item columns using cosine similarity.</p>
+          <Link className="primary-link" to="/similarity">
+            Open similarity
+          </Link>
+        </article>
         {lastFile && (
           <article className="action-card action-card--highlight">
             <h2>Continue with last file</h2>
@@ -162,6 +169,7 @@ export function DashboardPage() {
               <Link to={`/clustering/${lastFile.fileId}`}>Clustering</Link>
               <Link to={`/pca/${lastFile.fileId}`}>PCA</Link>
               <Link to={`/timeseries/${lastFile.fileId}`}>Time series</Link>
+              <Link to={`/similarity/${lastFile.fileId}`}>Similarity</Link>
               <Link to={`/versions/${lastFile.fileId}`}>Version history</Link>
             </div>
           </article>
@@ -236,6 +244,7 @@ export function DashboardPage() {
                   <Link to={`/clustering/${file.id}`}>Clustering</Link>
                   <Link to={`/pca/${file.id}`}>PCA</Link>
                   <Link to={`/timeseries/${file.id}`}>Time series</Link>
+                  <Link to={`/similarity/${file.id}`}>Similarity</Link>
                   <Link to={`/versions/${file.id}`}>Versions</Link>
                 </div>
               </li>

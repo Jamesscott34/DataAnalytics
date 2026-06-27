@@ -13,6 +13,7 @@ export function workspaceLinks(fileId) {
     { to: `/clustering/${fileId}`, label: 'Clustering' },
     { to: `/pca/${fileId}`, label: 'PCA' },
     { to: `/timeseries/${fileId}`, label: 'Time series' },
+    { to: `/similarity/${fileId}`, label: 'Similarity' },
     { to: `/versions/${fileId}`, label: 'Versions' },
   ];
 }

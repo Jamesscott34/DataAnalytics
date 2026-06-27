@@ -295,3 +295,46 @@ class TimeseriesResult(BaseModel):
     metrics: TimeseriesMetrics
     history: list[TimeseriesPoint]
     forecast: list[TimeseriesPoint]
+
+
+SimilarityMode = Literal["row", "item"]
+
+
+class SimilarityRequest(BaseModel):
+    """Run cosine similarity across rows or selected feature columns."""
+
+    mode: SimilarityMode = "row"
+    feature_columns: list[str] = Field(min_length=1)
+    id_column: str | None = None
+    top_n: int = Field(default=10, ge=1, le=50)
+
+
+class SimilarityMatrixRow(BaseModel):
+    """One row in the similarity matrix preview."""
+
+    label: str
+    values: list[float]
+
+
+class SimilarityTopPair(BaseModel):
+    """High-scoring pair from a similarity matrix."""
+
+    left: str
+    right: str
+    score: float
+
+
+class SimilarityResult(BaseModel):
+    """Cosine similarity output with suitability messaging."""
+
+    result_id: str
+    model_type: Literal["similarity"] = "similarity"
+    file_id: int
+    mode: SimilarityMode
+    feature_columns: list[str]
+    row_count: int
+    item_count: int
+    similarity_matrix_preview: list[SimilarityMatrixRow]
+    top_pairs: list[SimilarityTopPair]
+    suitable: bool
+    suitability_note: str
