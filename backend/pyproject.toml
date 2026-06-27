@@ -1,6 +1,6 @@
 [project]
 name = "predictive-security-analytics-lab-backend"
-version = "0.1.0"
+version = "1.0.0"
 description = "Backend API for predictive security analytics lab"
 requires-python = ">=3.12"
 

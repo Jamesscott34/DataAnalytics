@@ -69,7 +69,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(
         title="Predictive Security Analytics Lab",
-        version="0.1.0",
+        version="1.0.0",
         docs_url=f"{API_V1_PREFIX}/docs",
         openapi_url=f"{API_V1_PREFIX}/openapi.json",
         lifespan=lifespan,

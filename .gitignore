@@ -28,6 +28,7 @@ asset_manifest.enc
 *.swp
 
 # Test / coverage
+e2e/test-results/
 .coverage
 htmlcov/
 .pytest_cache/

@@ -1,6 +1,7 @@
 # Predictive Data Analytics Platform
 
 [![CI](https://github.com/Jamesscott34/DataAnalytics/actions/workflows/ci.yml/badge.svg)](https://github.com/Jamesscott34/DataAnalytics/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Jamesscott34/DataAnalytics/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A production-style, full-stack data analytics application built with **FastAPI** and **React**. It takes you from raw CSV or Excel files through security validation, exploratory analysis, machine learning, SQL querying, business intelligence, and professional report export, all behind authenticated, role-based access control.
