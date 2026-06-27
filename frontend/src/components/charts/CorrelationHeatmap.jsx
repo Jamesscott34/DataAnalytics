@@ -6,7 +6,6 @@ export function CorrelationHeatmap({ labels = [], matrix = [] }) {
     return null;
   }
 
-  const size = labels.length;
   const flatValues = matrix.flat();
   const minValue = Math.min(...flatValues, -1);
   const maxValue = Math.max(...flatValues, 1);

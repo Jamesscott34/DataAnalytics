@@ -13,12 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.models.uploaded_file import UploadedFile
-from app.schemas.models import (
-    PCAComponent,
-    PCALoading,
-    PCARequest,
-    PCAResult,
-)
+from app.schemas.models import PCAComponent, PCALoading, PCARequest, PCAResult
 from app.services.result_persistence_service import result_persistence_service
 from app.utils.encoding_utils import decode_csv_bytes
 from app.utils.type_utils import coerce_float, is_missing, normalize_cell

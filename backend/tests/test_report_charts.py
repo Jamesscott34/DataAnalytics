@@ -2,12 +2,7 @@
 
 from datetime import UTC, datetime
 
-from app.schemas.eda import (
-    ColumnSummary,
-    EDAResponse,
-    EDASummary,
-    NumericStats,
-)
+from app.schemas.eda import ColumnSummary, EDAResponse, EDASummary, NumericStats
 from app.schemas.quick_scan import QuickScanReport
 from app.services.report_charts import (
     eda_charts_to_markdown,

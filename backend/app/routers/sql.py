@@ -16,10 +16,7 @@ from app.schemas.sql import (
     SQLQueryRequest,
     SQLQueryResponse,
 )
-from app.services.dataset_group_service import (
-    DatasetGroupError,
-    dataset_group_service,
-)
+from app.services.dataset_group_service import DatasetGroupError, dataset_group_service
 from app.services.sql_analysis_service import SQLAnalysisError, sql_analysis_service
 
 router = APIRouter(prefix="/sql", tags=["sql"])

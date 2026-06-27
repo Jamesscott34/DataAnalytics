@@ -14,10 +14,7 @@ from app.schemas.group import (
     GroupListResponse,
     GroupResponse,
 )
-from app.services.dataset_group_service import (
-    DatasetGroupError,
-    dataset_group_service,
-)
+from app.services.dataset_group_service import DatasetGroupError, dataset_group_service
 
 router = APIRouter(prefix="/groups", tags=["groups"])
 
