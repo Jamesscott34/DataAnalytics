@@ -31,15 +31,13 @@ export function TimeSeriesForm({
           algorithm: formData.get('algorithm'),
           dateColumn: formData.get('date_column'),
           valueColumn: formData.get('value_column'),
-          forecastPeriods: Number(formData.get('forecast_periods')),
-          window: Number(formData.get('window')),
-          arLags: Number(formData.get('ar_lags')),
-          arimaP: Number(formData.get('arima_p')),
-          arimaD: Number(formData.get('arima_d')),
-          arimaQ: Number(formData.get('arima_q')),
-          seasonalPeriod: formData.get('seasonal_period')
-            ? Number(formData.get('seasonal_period'))
-            : null,
+          forecastPeriods: readNumber(formData, 'forecast_periods', 5),
+          window: readNumber(formData, 'window', 3),
+          arLags: readNumber(formData, 'ar_lags', 3),
+          arimaP: readNumber(formData, 'arima_p', 1),
+          arimaD: readNumber(formData, 'arima_d', 1),
+          arimaQ: readNumber(formData, 'arima_q', 1),
+          seasonalPeriod: readNullableNumber(formData, 'seasonal_period'),
         });
       }}
     >
@@ -147,4 +145,20 @@ export function TimeSeriesForm({
       </button>
     </form>
   );
+}
+
+function readNumber(formData, name, fallback) {
+  const value = formData.get(name);
+  if (value === null || value === '') {
+    return fallback;
+  }
+  return Number(value);
+}
+
+function readNullableNumber(formData, name) {
+  const value = formData.get(name);
+  if (value === null || value === '') {
+    return null;
+  }
+  return Number(value);
 }
