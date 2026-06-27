@@ -22,6 +22,9 @@ jobs:
           python -m venv .venv
           .venv/bin/pip install --upgrade pip
           .venv/bin/pip install -r requirements-dev.txt
+          .venv/bin/pip install "httpx2>=2.0.0,<3.0.0"
+      - name: Verify TestClient dependency
+        run: .venv/bin/python -c "from fastapi.testclient import TestClient"
       - name: Black
         run: .venv/bin/black --check app/ tests/
       - name: isort
