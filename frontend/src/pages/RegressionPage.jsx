@@ -22,12 +22,14 @@ export function RegressionPage() {
   const {
     algorithms,
     columns,
+    columnMeta,
     suggestions,
     result,
     loading,
     preparing,
     error,
     train,
+    clearError,
   } = useRegression(hasFileId ? fileId : null);
 
   useEffect(() => {
@@ -80,17 +82,15 @@ export function RegressionPage() {
       <section className="panel-card">
         <h2>Model configuration</h2>
         {preparing && <p>Loading columns and algorithm registry…</p>}
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
         {!preparing && (
           <RegressionForm
             algorithms={algorithms}
             columns={columns}
+            columnMeta={columnMeta}
             suggestions={suggestions}
             loading={loading}
+            serverError={error}
+            onClearServerError={clearError}
             onSubmit={train}
           />
         )}

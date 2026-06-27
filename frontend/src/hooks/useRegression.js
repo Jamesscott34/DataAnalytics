@@ -12,6 +12,7 @@ import { getModelRegistry, trainRegression } from '../api/models.js';
 export function useRegression(fileId) {
   const [algorithms, setAlgorithms] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [columnMeta, setColumnMeta] = useState([]);
   const [suggestions, setSuggestions] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,10 +29,8 @@ export function useRegression(fileId) {
       const registry = await getModelRegistry();
       setAlgorithms(registry.regression ?? []);
 
-      let edaResponse = null;
-      try {
-        edaResponse = await getEda(fileId);
-      } catch {
+      let edaResponse = await getEda(fileId);
+      if (!edaResponse) {
         try {
           edaResponse = await runEda(fileId, { forceRefresh: false });
         } catch {
@@ -41,6 +40,14 @@ export function useRegression(fileId) {
 
       if (edaResponse?.columns) {
         setColumns(edaResponse.columns.map((column) => column.name));
+        setColumnMeta(
+          edaResponse.columns.map((column) => ({
+            name: column.name,
+            inferred_type: column.inferred_type,
+            missing_percent: column.missing_percent,
+            unique_count: column.unique_count,
+          })),
+        );
       }
 
       try {
@@ -94,12 +101,14 @@ export function useRegression(fileId) {
   return {
     algorithms,
     columns,
+    columnMeta,
     suggestions,
     result,
     loading,
     preparing,
     error,
     train,
+    clearError: () => setError(null),
     reloadContext: loadContext,
   };
 }
