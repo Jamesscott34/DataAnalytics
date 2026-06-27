@@ -23,7 +23,11 @@ export default defineConfig({
   webServer: [
     {
       command:
-        'cd ../backend && python -m venv .venv-e2e 2>/dev/null; .venv-e2e/bin/pip install -q -r requirements-dev.txt && .venv-e2e/bin/alembic upgrade head && .venv-e2e/bin/uvicorn app.main:app --host 127.0.0.1 --port ' +
+        'cd ../backend && python -m venv .venv-e2e 2>/dev/null; .venv-e2e/bin/pip install -q -r requirements-dev.txt && .venv-e2e/bin/alembic upgrade head && CORS_ORIGINS=http://127.0.0.1:' +
+        PORT +
+        ',http://localhost:' +
+        PORT +
+        ' .venv-e2e/bin/uvicorn app.main:app --host 127.0.0.1 --port ' +
         API_PORT,
       url: `http://127.0.0.1:${API_PORT}/api/v1/health`,
       reuseExistingServer: !process.env.CI,
@@ -36,9 +40,6 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       cwd: `${__dirname}/../frontend`,
-      env: {
-        VITE_API_BASE_URL: `http://127.0.0.1:${API_PORT}/api/v1`,
-      },
     },
   ],
 });

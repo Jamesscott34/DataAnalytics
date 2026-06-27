@@ -24,7 +24,7 @@ test('upload, EDA, and JSON export workflow', async ({ page, request }) => {
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/password/i).fill(password);
   await page.getByRole('button', { name: /sign in/i }).click();
-  await expect(page).not.toHaveURL(/login/);
+  await expect(page).toHaveURL(/dashboard/, { timeout: 30_000 });
 
   const csvBuffer = await readFile(sampleCsv);
   const uploadResponse = await request.post(`${apiBase}/uploads`, {
