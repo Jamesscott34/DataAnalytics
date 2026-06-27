@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DatasetFilePicker } from '../components/DatasetFilePicker.jsx';
 import { DatasetFileToolbar } from '../components/DatasetFileToolbar.jsx';
@@ -14,6 +14,11 @@ export function BusinessDashboardPage() {
   const fileId = routeFileId ? Number(routeFileId) : null;
   const hasFileId = Number.isFinite(fileId);
   const lastFile = getLastFile();
+  const [mapping, setMapping] = useState({
+    dateColumn: '',
+    revenueColumn: '',
+    costColumn: '',
+  });
   const { columns, report, loading, preparing, error, analyze } = useBusinessAnalytics(
     hasFileId ? fileId : null,
   );
@@ -62,17 +67,39 @@ export function BusinessDashboardPage() {
             className="regression-form"
             onSubmit={(event) => {
               event.preventDefault();
-              const formData = new FormData(event.currentTarget);
-              analyze({
-                dateColumn: formData.get('date_column'),
-                revenueColumn: formData.get('revenue_column'),
-                costColumn: formData.get('cost_column'),
-              });
+              analyze(mapping);
             }}
           >
-            <ColumnSelect label="Date column" name="date_column" columns={columns} />
-            <ColumnSelect label="Revenue column" name="revenue_column" columns={columns} />
-            <ColumnSelect label="Cost column" name="cost_column" columns={columns} />
+            <div className="button-row">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setMapping(pestControlPreset(columns))}
+              >
+                Apply pest control preset
+              </button>
+            </div>
+            <ColumnSelect
+              label="Date column"
+              name="date_column"
+              columns={columns}
+              value={mapping.dateColumn}
+              onChange={(dateColumn) => setMapping((current) => ({ ...current, dateColumn }))}
+            />
+            <ColumnSelect
+              label="Revenue column"
+              name="revenue_column"
+              columns={columns}
+              value={mapping.revenueColumn}
+              onChange={(revenueColumn) => setMapping((current) => ({ ...current, revenueColumn }))}
+            />
+            <ColumnSelect
+              label="Cost column"
+              name="cost_column"
+              columns={columns}
+              value={mapping.costColumn}
+              onChange={(costColumn) => setMapping((current) => ({ ...current, costColumn }))}
+            />
             <button className="primary-button" type="submit" disabled={loading}>
               {loading ? 'Analyzing…' : 'Calculate KPIs'}
             </button>
@@ -114,11 +141,16 @@ export function BusinessDashboardPage() {
   );
 }
 
-function ColumnSelect({ label, name, columns }) {
+function ColumnSelect({ label, name, columns, value, onChange }) {
   return (
     <>
       <label htmlFor={`business-${name}`}>{label}</label>
-      <select id={`business-${name}`} name={name} defaultValue="">
+      <select
+        id={`business-${name}`}
+        name={name}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
         <option value="">Infer automatically</option>
         {columns.map((column) => (
           <option key={column} value={column}>
@@ -128,4 +160,16 @@ function ColumnSelect({ label, name, columns }) {
       </select>
     </>
   );
+}
+
+function pestControlPreset(columns) {
+  return {
+    dateColumn: pickColumn(columns, ['job_date', 'service_date', 'date']),
+    revenueColumn: pickColumn(columns, ['revenue', 'invoice_total', 'amount']),
+    costColumn: pickColumn(columns, ['cost', 'material_cost', 'labor_cost']),
+  };
+}
+
+function pickColumn(columns, candidates) {
+  return candidates.find((candidate) => columns.includes(candidate)) ?? '';
 }

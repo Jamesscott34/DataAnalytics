@@ -1,6 +1,9 @@
-region,pest_type,incidents,month
-North,rodent,12,January
-South,insect,8,January
-East,rodent,5,February
-West,insect,15,February
-North,insect,9,March
+job_date,customer_region,pest_type,technician,revenue,cost,service_count
+2024-01-03,North,Rodent,Avery,240,95,1
+2024-01-08,South,Ants,Blake,180,70,1
+2024-01-18,East,Termite,Casey,520,210,1
+2024-02-02,West,Rodent,Avery,260,105,1
+2024-02-14,North,Wasps,Devon,310,120,1
+2024-02-27,South,Termite,Casey,560,230,1
+2024-03-04,East,Ants,Blake,190,75,1
+2024-03-16,West,Bed bugs,Devon,430,180,1

@@ -49,7 +49,8 @@ def test_select_asset_imports_csv(client: TestClient, monkeypatch) -> None:
     assert response.status_code == 201
     body = response.json()
     assert body["filename"] == "pest_control_sample.csv"
-    assert body["row_count"] == 5
+    assert body["row_count"] == 8
+    assert body["column_count"] == 7
     assert body["scan_result"]["status"] in {"safe", "warning"}
 
 
