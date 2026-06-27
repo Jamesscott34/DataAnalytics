@@ -3,7 +3,7 @@
 [![CI](https://github.com/Jamesscott34/DataAnalytics/actions/workflows/ci.yml/badge.svg)](https://github.com/Jamesscott34/DataAnalytics/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A production-style, full-stack data analytics application built with **FastAPI** and **React**. It takes you from raw CSV or Excel files through security validation, exploratory analysis, machine learning, SQL querying, business intelligence, and professional report export — all behind authenticated, role-based access control.
+A production-style, full-stack data analytics application built with **FastAPI** and **React**. It takes you from raw CSV or Excel files through security validation, exploratory analysis, machine learning, SQL querying, business intelligence, and professional report export, all behind authenticated, role-based access control.
 
 The platform is designed for portfolio demonstration, coursework submission, and as a reference architecture for separating API routes, domain services, persistence, and a modern single-page frontend.
 
@@ -39,7 +39,7 @@ At a high level, the platform answers one question: **“What can we learn from 
 6. **Persist** outputs in SQL so results survive server restarts.
 7. **Export** findings as JSON, CSV, or PDF for sharing or archival.
 
-Every significant action — upload, scan, analysis run, export — is logged to an audit trail. Large files are sampled or processed in background jobs with live progress polling in the UI.
+Every significant action (upload, scan, analysis run, export) is logged to an audit trail. Large files are sampled or processed in background jobs with live progress polling in the UI.
 
 ---
 
@@ -48,7 +48,7 @@ Every significant action — upload, scan, analysis run, export — is logged to
 ### Authentication and user management
 
 - **JWT access and refresh tokens** with bcrypt password hashing.
-- **Three roles**: Admin, Analyst, and Viewer — enforced on every protected endpoint.
+- **Three roles**: Admin, Analyst, and Viewer, enforced on every protected endpoint.
 - **Session management**: login, refresh, logout, and `/auth/me` profile lookup.
 - **Admin user API**: list, update roles, and deactivate accounts.
 - Optional `ALLOW_PUBLIC_REGISTRATION` flag to restrict sign-up in production.
@@ -221,7 +221,7 @@ Long-running work (EDA on large files, queued model training) is tracked in `ana
 
 ### Quick scan
 
-A fast, lightweight file scan distinct from the full security scanner — produces a `report_id` used by the export pipeline for rapid suitability assessment.
+A fast, lightweight file scan distinct from the full security scanner. It produces a `report_id` used by the export pipeline for rapid suitability assessment.
 
 ### Export and reporting
 
@@ -283,11 +283,11 @@ Persistent `audit_logs` table plus structured log output for security-relevant e
 
 ### Design principles
 
-- **Routers stay thin** — no pandas, ML, or SQL in route handlers.
-- **Services own business logic** — testable in isolation with 80%+ coverage target.
-- **Results persist in SQL** — `model_results` table stores EDA, ML, and business outputs.
-- **Frontend never touches the database** — all access through `/api/v1`.
-- **Uploads never live in `public/`** — files stored outside the web root by content hash.
+- **Routers stay thin**: no pandas, ML, or SQL in route handlers.
+- **Services own business logic**: testable in isolation with 80%+ coverage target.
+- **Results persist in SQL**: `model_results` table stores EDA, ML, and business outputs.
+- **Frontend never touches the database**: all access through `/api/v1`.
+- **Uploads never live in `public/`**: files stored outside the web root by content hash.
 
 Full diagrams and layer tables: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
@@ -323,7 +323,7 @@ View dashboards + explainability
 Export JSON / CSV / PDF
 ```
 
-**Demo path** — import `temp_assets/pest_control_sample.csv` → Business analytics → pest control preset → Calculate KPIs → Export report.
+**Demo path**: import `temp_assets/pest_control_sample.csv` → Business analytics → pest control preset → Calculate KPIs → Export report.
 
 ---
 
@@ -435,7 +435,7 @@ Copy [backend/.env.example](backend/.env.example) and adjust as needed.
 | `LLM_API_KEY` | Optional insight generation | Empty (fallback text) |
 | `ALLOW_PUBLIC_REGISTRATION` | Open sign-up | `true` |
 
-Frontend: [frontend/.env.example](frontend/.env.example) — set `VITE_API_BASE_URL` in production builds.
+Frontend: [frontend/.env.example](frontend/.env.example): set `VITE_API_BASE_URL` in production builds.
 
 ---
 
@@ -455,8 +455,8 @@ GitHub Actions runs backend and frontend checks on every push and pull request t
 
 ## Deployment
 
-- **Docker Compose** — `docker compose up --build` for local or single-host deployment.
-- **Railway** — step-by-step guide: [deploy/railway.md](deploy/railway.md).
+- **Docker Compose**: `docker compose up --build` for local or single-host deployment.
+- **Railway**: step-by-step guide: [deploy/railway.md](deploy/railway.md).
 - **Production checklist**:
   - PostgreSQL instead of SQLite
   - Strong `JWT_SECRET_KEY` via platform secrets
@@ -486,4 +486,4 @@ GitHub Actions runs backend and frontend checks on every push and pull request t
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
